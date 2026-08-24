@@ -24,7 +24,7 @@ function gerarVerticesCirculo(cx, cy, raio, quantidadeSegmentos) {
     vertices.push(cx, cy);
 
     // Vértices seguintes: Pontos ao redor da circunferência
-    for (let i = 0; i <= quantidadeSegmentos; i++) {
+    for (let i = 0; i < quantidadeSegmentos; i++) {
         // Calcula o ângulo atual em radianos (vai de 0 a 2*PI)
         const angulo = (i * 2 * Math.PI) / quantidadeSegmentos;
         
@@ -87,7 +87,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
 
 gl.bufferData(
     gl.ARRAY_BUFFER,
-    vertices,
+    dadosVertices,
     gl.STATIC_DRAW
 );
 
