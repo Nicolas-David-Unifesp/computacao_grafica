@@ -1,5 +1,5 @@
-const canvas_square2 = document.getElementById("glCanvas4");
-const gl_square2 = canvas_square2.getContext("webgl2");
+const canvas = document.getElementById("canvas");
+const gl = canvas.getContext("webgl2");
 
 if (!gl_square2) {
     throw new Error("WebGL 2 não é suportado.");
