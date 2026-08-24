@@ -13,6 +13,8 @@ if (!gl_square2) {
 let vertices = [];
 
 function setRetangle(x,y,weight,height){
+    // x e y são as coordenadas do canto inferior esquerdo do retângulo, 
+    // weight é a largura e height é a altura
     return new Float32Array([
         x,y+height,
         x+weight,y+height,
@@ -30,10 +32,10 @@ function setRetangle(x,y,weight,height){
 
 let colors_square2 = [];
 
-function setRetangleColors(){
-    let color = [Math.random(), Math.random(), Math.random()];
+function setRetangleColors(r,g,b){
+    let color = [r, g, b];
     let colorValues = [];
-    for(let i=0;i<6;i++)
+    for(let i=0;i<6;i++)//
         colorValues.push(...color);
     return new Float32Array(colorValues);
 }
@@ -180,6 +182,7 @@ gl_square2.clear(gl_square2.COLOR_BUFFER_BIT);
 
 gl_square2.bindBuffer(gl_square2.ARRAY_BUFFER, verticesBuffer_square2);
 
+
 vertices_square2 = setRetangle(0.25,0.25,0.25,0.25);
 
 gl_square2.bufferData(
@@ -201,7 +204,7 @@ gl_square2.vertexAttribPointer(
 
 gl_square2.bindBuffer(gl_square2.ARRAY_BUFFER, colorsBuffer_square2);
 
-colors_square2 = setRetangleColors();
+colors_square2 = setRetangleColors(255, 255, 0); // amarelo
 
 gl_square2.bufferData(
     gl_square2.ARRAY_BUFFER,
