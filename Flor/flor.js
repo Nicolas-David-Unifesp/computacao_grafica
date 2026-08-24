@@ -60,7 +60,7 @@ if (!gl) {
 
 let centroX = 0.0;
 let centroY = -0.5;
-let raio = 0.4;
+let raio = 0.5;
 let segmentos = 50; 
 
 const dadosVertices = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
@@ -300,4 +300,45 @@ gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, colors3, gl.STATIC_DRAW);
 
 gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+
+//Quarto círculo
+centroX = 0.0;
+centroY = 0.5;
+raio = 0.5;
+segmentos = 50; 
+
+const dadosVertices4 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
+const colors4 = gerarCoresCirculo(segmentos, 1.0, 0.55, 0.63);
+
+// Atualiza o buffer de vértices
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, dadosVertices4, gl.STATIC_DRAW);
+
+// Atualiza o buffer de cores
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, colors4, gl.STATIC_DRAW);
+
+gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+//Pétala central
+centroX = 0.0;
+centroY = 0.5;
+raio = 0.5;
+segmentos = 50; 
+
+const dadosVertices5 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
+const colors5 = gerarCoresCirculo(segmentos, 255, 255, 0); // Cor amarela
+
+// Atualiza o buffer de vértices
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, dadosVertices5, gl.STATIC_DRAW);
+
+// Atualiza o buffer de cores
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, colors5, gl.STATIC_DRAW);
+
+gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+
 
