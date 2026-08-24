@@ -58,10 +58,10 @@ if (!gl) {
 // 1. Vertices
 // --------------------------------------------------
 
-const centroX = 0.0;
-const centroY = -0.5;
-const raio = 0.4;
-const segmentos = 50; 
+let centroX = 0.0;
+let centroY = -0.5;
+let raio = 0.4;
+let segmentos = 50; 
 
 const dadosVertices = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
 const colors = gerarCoresCirculo(segmentos, 1.0, 0.55, 0.63); // Cor rosa
