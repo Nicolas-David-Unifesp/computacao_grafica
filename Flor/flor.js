@@ -42,24 +42,18 @@ function gerarVerticesCirculo(cx, cy, raio, quantidadeSegmentos) {
 const dadosVertices = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
 
 //Cor do círculo
-function gerarCoresCirculo(seg) {
+function gerarCoresCirculo(seg, r, g, b) {
     const c = [];
-    // Cor do centro (Ex: Amarelo)
-    c.push(1.0, 1.0, 0.0);
 
-    for (let i = 0; i < seg; i++) {
-        // Altera gradualmente a cor da borda com base no ângulo (Efeito arco-íris)
-        const angulo = (i * 2 * Math.PI) / seg;
-        c.push(
-            Math.abs(Math.cos(angulo)),                  // Vermelho
-            Math.abs(Math.sin(angulo)),                  // Verde
-            Math.abs(Math.cos(angulo) * Math.sin(angulo)) // Azul
-        );
+    // O centro e todos os vértices da borda usam a mesma cor (r, g, b)
+    for (let i = 0; i <= seg; i++) {
+        c.push(r, g, b);
     }
+
     return new Float32Array(c);
 }
 
-const colors = gerarCoresCirculo(segmentos);
+const colors = gerarCoresCirculo(segmentos, 1.0, 1.0, 0.0); // Cor amarela
 
 function gerarIndicesCirculo(seg) {
     const ind = [];
