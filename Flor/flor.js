@@ -265,7 +265,7 @@ gl.drawElements(
 
 //Segundo círculo
 centroX = -0.5;
-centroY = -0.5;
+centroY = 0.0;
 raio = 0.5;
 segmentos = 50; 
 
