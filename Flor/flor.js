@@ -60,7 +60,7 @@ if (!gl) {
 
 let centroX = 0.0;
 let centroY = -0.5;
-let raio = 0.5;
+let raio = 0.435;
 let segmentos = 50; 
 
 const dadosVertices = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
@@ -266,7 +266,7 @@ gl.drawElements(
 //Segundo círculo
 centroX = -0.5;
 centroY = 0.0;
-raio = 0.5;
+raio = 0.479;
 segmentos = 50; 
 
 const dadosVertices2 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
@@ -285,7 +285,7 @@ gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 //Terceiro círculo
 centroX = 0.5;
 centroY = 0.0;
-raio = 0.5;
+raio = 0.479;
 segmentos = 50; 
 
 const dadosVertices3 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
@@ -324,7 +324,7 @@ gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 //Pétala central
 centroX = 0.0;
 centroY = 0.0;
-raio = 0.4;
+raio = 0.223;
 segmentos = 50; 
 
 const dadosVertices5 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
