@@ -263,58 +263,21 @@ gl.drawElements(
     0
 );
 
+//Segundo círculo
 centroX = -0.5;
 centroY = -0.5;
 raio = 0.5;
 segmentos = 50; 
 
-dadosVertices = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
-colors = gerarCoresCirculo(segmentos, 1.0, 0.55, 0.63); // Cor rosa
-indices = gerarIndicesCirculo(segmentos);
+const dadosVertices2 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
+const colors2 = gerarCoresCirculo(segmentos, 1.0, 0.55, 0.63);
 
-// --------------------------------------------------
-// 2. BUFFERS
-// --------------------------------------------------
-
-verticesBuffer = gl.createBuffer();
-
+// Atualiza o buffer de vértices
 gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, dadosVertices2, gl.STATIC_DRAW);
 
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    dadosVertices,
-    gl.STATIC_DRAW
-);
-
-colorsBuffer = gl.createBuffer();
-
+// Atualiza o buffer de cores
 gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, colors2, gl.STATIC_DRAW);
 
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    colors,
-    gl.STATIC_DRAW
-);
-
-const program2 = gl.createProgram();
-
-gl.attachShader(program2, vertexShader);
-gl.attachShader(program2, fragmentShader);
-
-gl.linkProgram(program2);
-
-if (!gl.getProgramParameter(program2, gl.LINK_STATUS)) {
-
-    throw new Error(
-        gl.getProgramInfoLog(program2)
-    );
-}
-
-gl.useProgram(program2);
-
-gl.drawElements(
-    gl.TRIANGLES,
-    indices.length,
-    gl.UNSIGNED_SHORT,
-    0
-);
+gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
