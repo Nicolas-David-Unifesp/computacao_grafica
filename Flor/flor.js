@@ -1,21 +1,3 @@
-
-
-const canvas = document.getElementById("canvas");
-const gl = canvas.getContext("webgl2");
-
-if (!gl) {
-    throw new Error("WebGL 2 não é suportado.");
-}
-
-// --------------------------------------------------
-// 1. Vertices
-// --------------------------------------------------
-
-const centroX = 0.0;
-const centroY = 0.0;
-const raio = 0.5;
-const segmentos = 50; 
-
 function gerarVerticesCirculo(cx, cy, raio, quantidadeSegmentos) {
     // Array para guardar as coordenadas (X, Y)
     const vertices = [];
@@ -38,9 +20,6 @@ function gerarVerticesCirculo(cx, cy, raio, quantidadeSegmentos) {
     return new Float32Array(vertices);
 }
 
-
-const dadosVertices = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
-
 //Cor do círculo
 function gerarCoresCirculo(seg, r, g, b) {
     const c = [];
@@ -52,8 +31,6 @@ function gerarCoresCirculo(seg, r, g, b) {
 
     return new Float32Array(c);
 }
-
-const colors = gerarCoresCirculo(segmentos, 1.0, 1.0, 0.0); // Cor amarela
 
 function gerarIndicesCirculo(seg) {
     const ind = [];
@@ -69,6 +46,25 @@ function gerarIndicesCirculo(seg) {
     return new Uint16Array(ind);
 }
 
+
+const canvas = document.getElementById("canvas");
+const gl = canvas.getContext("webgl2");
+
+if (!gl) {
+    throw new Error("WebGL 2 não é suportado.");
+}
+
+// --------------------------------------------------
+// 1. Vertices
+// --------------------------------------------------
+
+const centroX = 0.0;
+const centroY = 0.0;
+const raio = 0.5;
+const segmentos = 50; 
+
+const dadosVertices = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
+const colors = gerarCoresCirculo(segmentos, 1.0, 1.0, 0.0); // Cor amarela
 const indices = gerarIndicesCirculo(segmentos);
 
 // --------------------------------------------------
