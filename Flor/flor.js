@@ -323,8 +323,8 @@ gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
 //Pétala central
 centroX = 0.0;
-centroY = 0.5;
-raio = 0.5;
+centroY = 0.0;
+raio = 0.4;
 segmentos = 50; 
 
 const dadosVertices5 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
