@@ -281,3 +281,23 @@ gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, colors2, gl.STATIC_DRAW);
 
 gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+//Terceiro círculo
+centroX = 0.5;
+centroY = 0.0;
+raio = 0.5;
+segmentos = 50; 
+
+const dadosVertices3 = gerarVerticesCirculo(centroX, centroY, raio, segmentos);
+const colors3 = gerarCoresCirculo(segmentos, 1.0, 0.55, 0.63);
+
+// Atualiza o buffer de vértices
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, dadosVertices3, gl.STATIC_DRAW);
+
+// Atualiza o buffer de cores
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, colors3, gl.STATIC_DRAW);
+
+gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
