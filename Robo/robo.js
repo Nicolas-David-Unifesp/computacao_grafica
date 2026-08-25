@@ -186,7 +186,7 @@ gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
 // Desenha 3º Retângulo
 gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
 
-vertices_square2 = setRectangle(0.5, 0.2, 0.4, 0.26); // Reutilizando a variável, largura, altura
+vertices_square2 = setRectangle(0.5, -0.2, 0.101, 0.41); // Reutilizando a variável, largura, altura
 colors_square2 = setRectangleColors(1, 1, 1); // Branco (exemplo)
 
 // Atualiza buffer de Posição
@@ -214,7 +214,7 @@ gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
 
 //5 retangulo
 
-vertices_square2 = setRectangle(-0.008, -0.5, 0.016, 0.4); // Reutilizando a variável, largura, altura
+vertices_square2 = setRectangle(-0.008, 0.5, 0.016, 0.4); // Reutilizando a variável, largura, altura
 colors_square2 = setRectangleColors(1, 1, 1); // Branco
 
 // Atualiza buffer de Posição
