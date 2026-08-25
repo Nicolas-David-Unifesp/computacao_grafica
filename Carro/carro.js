@@ -1,7 +1,7 @@
-const canvas = document.getElementById("canvas");
+const canvas = document.getElementById("carro");
 const gl = canvas.getContext("webgl2");
 
-if (!gl_square2) {
+if (!gl) {
     throw new Error("WebGL 2 não é suportado.");
 }
 
@@ -44,7 +44,7 @@ function setRetangleColors(r,g,b){
 // 2. BUFFERS
 // --------------------------------------------------
 
-const verticesBuffer_square2 = gl_square2.createBuffer();
+const verticesBuffer_square2 = gl.createBuffer();
 
 const colorsBuffer_square2 = gl_square2.createBuffer();
 
