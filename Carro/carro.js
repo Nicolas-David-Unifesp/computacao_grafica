@@ -12,7 +12,7 @@ if (!gl) {
 
 let vertices = [];
 
-function setRetangle(x,y,weight,height){
+function setRectangle(x,y,weight,height){
     // x e y são as coordenadas do canto inferior esquerdo do retângulo, 
     // weight é a largura e height é a altura
     return new Float32Array([
@@ -32,7 +32,7 @@ function setRetangle(x,y,weight,height){
 
 let colors_square2 = [];
 
-function setRetangleColors(r,g,b){
+function setRectangleColors(r, g, b) {
     let color = [r, g, b];
     let colorValues = [];
     for(let i=0;i<6;i++)//
@@ -46,14 +46,14 @@ function setRetangleColors(r,g,b){
 
 const verticesBuffer_square2 = gl.createBuffer();
 
-const colorsBuffer_square2 = gl_square2.createBuffer();
 
-gl_square2.bindBuffer(gl_square2.ARRAY_BUFFER, colorsBuffer_square2);
 
-gl_square2.bufferData(
-    gl_square2.ARRAY_BUFFER,
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_square2);
+
+gl.bufferData(
+    gl.ARRAY_BUFFER,
     colors_square2,
-    gl_square2.STATIC_DRAW
+    gl.STATIC_DRAW
 );
 
 
@@ -121,14 +121,14 @@ function createShader(gl, type, source) {
 
 
 const vertexShader_square2 = createShader(
-    gl_square2,
-    gl_square2.VERTEX_SHADER,
+    gl,
+    gl.VERTEX_SHADER,
     vertexShaderSource_square2
 );
 
 const fragmentShader_square2 = createShader(
-    gl_square2,
-    gl_square2.FRAGMENT_SHADER,
+    gl,
+    gl.FRAGMENT_SHADER,
     fragmentShaderSource_square2
 );
 
@@ -137,17 +137,17 @@ const fragmentShader_square2 = createShader(
 // 6. CRIAR PROGRAMA
 // --------------------------------------------------
 
-const program_square2 = gl_square2.createProgram();
+const program_square2 = gl.createProgram();
 
-gl_square2.attachShader(program_square2, vertexShader_square2);
-gl_square2.attachShader(program_square2, fragmentShader_square2);
+gl.attachShader(program_square2, vertexShader_square2);
+gl.attachShader(program_square2, fragmentShader_square2);
 
-gl_square2.linkProgram(program_square2);
+gl.linkProgram(program_square2);
 
-if (!gl_square2.getProgramParameter(program_square2, gl_square2.LINK_STATUS)) {
+if (!gl.getProgramParameter(program_square2, gl.LINK_STATUS)) {
 
     throw new Error(
-        gl_square2.getProgramInfoLog(program_square2)
+        gl.getProgramInfoLog(program_square2)
     );
 }
 
@@ -157,13 +157,13 @@ if (!gl_square2.getProgramParameter(program_square2, gl_square2.LINK_STATUS)) {
 // --------------------------------------------------
 
 const positionLocation_square2 =
-    gl_square2.getAttribLocation(
+    gl.getAttribLocation(
         program_square2,
         "aPosition"
     );
 
 const colorsLocation_square2 =
-    gl_square2.getAttribLocation(
+    gl.getAttribLocation(
         program_square2,
         "aColors"
     );
@@ -172,52 +172,52 @@ const colorsLocation_square2 =
 // 8. LIMPAR TELA
 // --------------------------------------------------
 
-gl_square2.clearColor(0.1, 0.1, 0.1, 1.0);
+gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
-gl_square2.clear(gl_square2.COLOR_BUFFER_BIT);
+gl.clear(gl.COLOR_BUFFER_BIT);
 
 // --------------------------------------------------
 // 9. CONFIGURAR ATRIBUTOS
 // --------------------------------------------------
 
-gl_square2.bindBuffer(gl_square2.ARRAY_BUFFER, verticesBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_square2);
 
 
-vertices_square2 = setRetangle(0.25,0.25,0.25,0.25);
+vertices_square2 = setRectangle(0.25,0.25,0.25,0.25);
 
-gl_square2.bufferData(
-    gl_square2.ARRAY_BUFFER,
+gl.bufferData(
+    gl.ARRAY_BUFFER,
     vertices_square2,
-    gl_square2.STATIC_DRAW
+    gl.STATIC_DRAW
 );
 
-gl_square2.enableVertexAttribArray(positionLocation_square2);
+gl.enableVertexAttribArray(positionLocation_square2);
 
-gl_square2.vertexAttribPointer(
+gl.vertexAttribPointer(
     positionLocation_square2,
     2,
-    gl_square2.FLOAT,
+    gl.FLOAT,
     false,
     0,
     0
 );
 
-gl_square2.bindBuffer(gl_square2.ARRAY_BUFFER, colorsBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_square2);
 
-colors_square2 = setRetangleColors(255, 255, 0); // amarelo
+colors_square2 = setRectangleColors(1, 1, 0); // amarelo
 
-gl_square2.bufferData(
-    gl_square2.ARRAY_BUFFER,
+gl.bufferData(
+    gl.ARRAY_BUFFER,
     colors_square2,
-    gl_square2.STATIC_DRAW
+    gl.STATIC_DRAW
 );
 
-gl_square2.enableVertexAttribArray(colorsLocation_square2);
+gl.enableVertexAttribArray(colorsLocation_square2);
 
-gl_square2.vertexAttribPointer(
+gl.vertexAttribPointer(
     colorsLocation_square2,
     3,
-    gl_square2.FLOAT,
+    gl.FLOAT,
     false,
     0,
     0
@@ -227,10 +227,10 @@ gl_square2.vertexAttribPointer(
 // 10. DESENHAR
 // --------------------------------------------------
 
-gl_square2.useProgram(program_square2);
+gl.useProgram(program_square2);
 
-gl_square2.drawArrays(
-    gl_square2.TRIANGLES,
+gl.drawArrays(
+    gl.TRIANGLES,
     0, 
     vertices_square2.length / 2
 );
@@ -239,43 +239,44 @@ gl_square2.drawArrays(
 // 11. CONFIGURAR ATRIBUTOS
 // --------------------------------------------------
 
-gl_square2.bindBuffer(gl_square2.ARRAY_BUFFER, verticesBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_square2);
 
-vertices_square2 = setSquareVertices_square2(-0.5,-0.5,0.25,0.25);
 
-gl_square2.bufferData(
-    gl_square2.ARRAY_BUFFER,
+let vertices_square2 = setRectangle(-0.5,-0.5,0.25,0.25);
+
+gl.bufferData(
+    gl.ARRAY_BUFFER,
     vertices_square2,
-    gl_square2.STATIC_DRAW
+    gl.STATIC_DRAW
 );
 
-gl_square2.enableVertexAttribArray(positionLocation_square2);
+gl.enableVertexAttribArray(positionLocation_square2);
 
-gl_square2.vertexAttribPointer(
+gl.vertexAttribPointer(
     positionLocation_square2,
     2,
-    gl_square2.FLOAT,
+    gl.FLOAT,
     false,
     0,
     0
 );
 
-gl_square2.bindBuffer(gl_square2.ARRAY_BUFFER, colorsBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_square2);
 
-colors_square2 = setSquareColors_square2();
+colors_square2 = setRectangleColors(1, 1, 0); // amarelo
 
-gl_square2.bufferData(
-    gl_square2.ARRAY_BUFFER,
+gl.bufferData(
+    gl.ARRAY_BUFFER,
     colors_square2,
-    gl_square2.STATIC_DRAW
+    gl.STATIC_DRAW
 );
 
-gl_square2.enableVertexAttribArray(colorsLocation_square2);
+gl.enableVertexAttribArray(colorsLocation_square2);
 
-gl_square2.vertexAttribPointer(
+gl.vertexAttribPointer(
     colorsLocation_square2,
     3,
-    gl_square2.FLOAT,
+    gl.FLOAT,
     false,
     0,
     0
@@ -285,10 +286,10 @@ gl_square2.vertexAttribPointer(
 // 12. DESENHAR
 // --------------------------------------------------
 
-gl_square2.useProgram(program_square2);
+gl.useProgram(program_square2);
 
-gl_square2.drawArrays(
-    gl_square2.TRIANGLES,
+gl.drawArrays(
+    gl.TRIANGLES,
     0, 
     vertices_square2.length / 2
 );
