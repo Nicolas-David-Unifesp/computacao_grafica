@@ -153,8 +153,8 @@ gl.clear(gl.COLOR_BUFFER_BIT);
 gl.useProgram(program_retangle);
 
 // --- PRIMEIRO RETÂNGULO ---
-let vertices_square2 = setRectangle(-0.6, -0.2, 1.2, 0.4);
-let colors_square2 = setRectangleColors(1, 1, 0); // Amarelo
+let vertices_square2 = setRectangle(-0.5, -0.5, 1., 1);
+let colors_square2 = setRectangleColors(1, 1, 1); // 
 
 // Posição
 gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
@@ -172,8 +172,50 @@ gl.vertexAttribPointer(colorsLocation_retangle, 3, gl.FLOAT, false, 0, 0);
 gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
 
 // --- SEGUNDO RETÂNGULO ---
-vertices_square2 = setRectangle(-0.2, 0.2, 0.7, 0.3); // Reutilizando a variável, largura, altura
-colors_square2 = setRectangleColors(1, 1, 0); // Amarelo (exemplo)
+vertices_square2 = setRectangle(-0.6, -0.2, 0.1, 0.4); // Reutilizando a variável, largura, altura
+colors_square2 = setRectangleColors(1, 1, 1); // Branco (exemplo)
+
+// Atualiza buffer de Posição
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
+gl.bufferData(gl.ARRAY_BUFFER, vertices_square2, gl.STATIC_DRAW);
+
+// Atualiza buffer de Cor
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_Retangl);
+gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
+
+// Desenha 3º Retângulo
+gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
+
+vertices_square2 = setRectangle(0.5, 0.2, 0.4, 0.26); // Reutilizando a variável, largura, altura
+colors_square2 = setRectangleColors(1, 1, 1); // Branco (exemplo)
+
+// Atualiza buffer de Posição
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
+gl.bufferData(gl.ARRAY_BUFFER, vertices_square2, gl.STATIC_DRAW);
+
+// Atualiza buffer de Cor
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_Retangl);
+gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
+
+// Desenha 4º Retângulo
+gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
+
+vertices_square2 = setRectangle(-0.3, -0.4, 0.6, 0.2); // Reutilizando a variável, largura, altura
+colors_square2 = setRectangleColors(1, 1, 0); // Amarelo
+
+// Atualiza buffer de Posição
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
+gl.bufferData(gl.ARRAY_BUFFER, vertices_square2, gl.STATIC_DRAW);
+
+// Atualiza buffer de Cor
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_Retangl);
+gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
+gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
+
+//5 retangulo
+
+vertices_square2 = setRectangle(-0.008, -0.5, 0.016, 0.4); // Reutilizando a variável, largura, altura
+colors_square2 = setRectangleColors(1, 1, 1); // Branco
 
 // Atualiza buffer de Posição
 gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
@@ -186,33 +228,9 @@ gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
 // Desenha 2º Retângulo
 gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
 
-vertices_square2 = setRectangle(-0.1, 0.2, 0.4, 0.26); // Reutilizando a variável, largura, altura
-colors_square2 = setRectangleColors(0, 1, 1); // Ciano (exemplo)
 
-// Atualiza buffer de Posição
-gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
-gl.bufferData(gl.ARRAY_BUFFER, vertices_square2, gl.STATIC_DRAW);
 
-// Atualiza buffer de Cor
-gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_Retangl);
-gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
 
-// Desenha 2º Retângulo
-gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
-
-vertices_square2 = setRectangle(0.33, 0.2, 0.11, 0.26); // Reutilizando a variável, largura, altura
-colors_square2 = setRectangleColors(0, 1, 1); // Ciano (exemplo)
-
-// Atualiza buffer de Posição
-gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
-gl.bufferData(gl.ARRAY_BUFFER, vertices_square2, gl.STATIC_DRAW);
-
-// Atualiza buffer de Cor
-gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_Retangl);
-gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
-
-// Desenha 2º Retângulo
-gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
 
 // --------------------------------------------------
 // A parte de Círculos
@@ -221,7 +239,7 @@ gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
 // --------------------------------------------------
 // A parte de Círculos
 // --------------------------------------------------
-
+/*
 let centroX = -0.4;
 let centroY = -0.1;
 let raio = 0.17;
@@ -311,3 +329,4 @@ gl.bufferData(gl.ARRAY_BUFFER, colors_circulo4, gl.STATIC_DRAW);
 
 gl.drawElements(gl.TRIANGLES,indices.length,gl.UNSIGNED_SHORT,0);
 
+*/
