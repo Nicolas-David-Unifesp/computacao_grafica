@@ -33,8 +33,8 @@ function setRectangleColors(r, g, b) {
 // 2. BUFFERS (Criar ambos os buffers)
 // --------------------------------------------------
 
-const verticesBuffer_square2 = gl.createBuffer();
-const colorsBuffer_square2 = gl.createBuffer(); // Adicionado aqui
+const verticesBuffer_Retangl = gl.createBuffer();
+const colorsBuffer_Retangl = gl.createBuffer(); // Adicionado aqui
 
 // --------------------------------------------------
 // 3. SHADERS E PROGRAMA
@@ -75,24 +75,24 @@ function createShader(gl, type, source) {
     return shader;
 }
 
-const vertexShader_square2 = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource_square2);
-const fragmentShader_square2 = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource_square2);
+const vertexShader_Retangle = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource_square2);
+const fragmentShader_Retangle = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource_square2);
 
-const program_square2 = gl.createProgram();
-gl.attachShader(program_square2, vertexShader_square2);
-gl.attachShader(program_square2, fragmentShader_square2);
-gl.linkProgram(program_square2);
+const program_retangle = gl.createProgram();
+gl.attachShader(program_retangle, vertexShader_Retangle);
+gl.attachShader(program_retangle, fragmentShader_Retangle);
+gl.linkProgram(program_retangle);
 
-if (!gl.getProgramParameter(program_square2, gl.LINK_STATUS)) {
-    throw new Error(gl.getProgramInfoLog(program_square2));
+if (!gl.getProgramParameter(program_retangle, gl.LINK_STATUS)) {
+    throw new Error(gl.getProgramInfoLog(program_retangle));
 }
 
 // --------------------------------------------------
 // 4. ATRIBUTOS
 // --------------------------------------------------
 
-const positionLocation_square2 = gl.getAttribLocation(program_square2, "aPosition");
-const colorsLocation_square2 = gl.getAttribLocation(program_square2, "aColors");
+const positionLocation_square2 = gl.getAttribLocation(program_retangle, "aPosition");
+const colorsLocation_retangle = gl.getAttribLocation(program_retangle, "aColors");
 
 // --------------------------------------------------
 // 5. RENDERIZAÇÃO
@@ -101,23 +101,23 @@ const colorsLocation_square2 = gl.getAttribLocation(program_square2, "aColors");
 gl.clearColor(0.1, 0.1, 0.1, 1.0);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
-gl.useProgram(program_square2);
+gl.useProgram(program_retangle);
 
 // --- PRIMEIRO RETÂNGULO ---
 let vertices_square2 = setRectangle(0.25, 0.25, 0.25, 0.25);
 let colors_square2 = setRectangleColors(1, 1, 0); // Amarelo
 
 // Posição
-gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
 gl.bufferData(gl.ARRAY_BUFFER, vertices_square2, gl.STATIC_DRAW);
 gl.enableVertexAttribArray(positionLocation_square2);
 gl.vertexAttribPointer(positionLocation_square2, 2, gl.FLOAT, false, 0, 0);
 
 // Cor
-gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_Retangl);
 gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
-gl.enableVertexAttribArray(colorsLocation_square2);
-gl.vertexAttribPointer(colorsLocation_square2, 3, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(colorsLocation_retangle);
+gl.vertexAttribPointer(colorsLocation_retangle, 3, gl.FLOAT, false, 0, 0);
 
 // Desenha 1º Retângulo
 gl.drawArrays(gl.TRIANGLES, 0, vertices_square2.length / 2);
@@ -127,11 +127,11 @@ vertices_square2 = setRectangle(-0.5, -0.5, 0.25, 0.25); // Reutilizando a vari�
 colors_square2 = setRectangleColors(1, 0, 0); // Vermelho (exemplo)
 
 // Atualiza buffer de Posição
-gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer_Retangl);
 gl.bufferData(gl.ARRAY_BUFFER, vertices_square2, gl.STATIC_DRAW);
 
 // Atualiza buffer de Cor
-gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_square2);
+gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer_Retangl);
 gl.bufferData(gl.ARRAY_BUFFER, colors_square2, gl.STATIC_DRAW);
 
 // Desenha 2º Retângulo
