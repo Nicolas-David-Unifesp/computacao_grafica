@@ -44,7 +44,16 @@ function bresenham(x0, y0, x1, y1) {
         if (e2 <  dx) { err += dx; y += sy; }
     }
     return points;
-}   
+}
+
+
+function pixelToWebGL(px, py) { //Função para converter coordenadas de pixel para coordenadas WebGL
+    const wx =  (px / canvas.width)  * 2 - 1;
+    const wy = -((py / canvas.height) * 2 - 1);
+    return [wx, wy];
+}
+
+
 
 // --------------------------------------------------
 // 1. VERTICES
