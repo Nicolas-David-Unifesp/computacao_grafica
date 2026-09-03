@@ -24,6 +24,7 @@ const modeDisplay =
     );
 
 const colorDisplay = document.getElementById("colorDisplay");
+const thicknessDisplay = document.getElementById("thicknessDisplay");
 
 const colorOptions = {
     "0": { name: "Ciano", value: [0.0, 0.8, 1.0] },
@@ -84,7 +85,7 @@ function buildBuffers(pointList, color) {
         cols[i * 3]      = color[0];
         cols[i * 3 + 1]  = color[1];
         cols[i * 3 + 2]  = color[2];
-        sizes[i] = 2.0;
+        sizes[i] = lineThickness;
     }
  
     vertices  = verts;
@@ -134,7 +135,7 @@ function updateBuffers() {
         cols[i * 3] = selectedColor[0];
         cols[i * 3 + 1] = selectedColor[1];
         cols[i * 3 + 2] = selectedColor[2];
-        sizes[i] = 2.0;
+        sizes[i] = lineThickness;
     }
 
     uploadBuffer(verticesBuffer, verts);
@@ -170,6 +171,7 @@ let mode = "reta"; // Muda os modos entre reta e triangulo
 let clickBuffer = []; // buffer pra acumular os cliques
 let allPoints = []; // buffer pra acumular todos os pontos desenhados
 let selectedColor = colorOptions["0"].value;
+let lineThickness = 2.0;
 
 
 // --------------------------------------------------
@@ -348,6 +350,14 @@ document.addEventListener("keydown", (e) => {
         mode = "triangulo";
         clickBuffer = [];
         modeDisplay.textContent = "Modo: Triângulo  (clique 3× para traçar)";
+    }
+
+    if (key === "+" || (key === "=" && e.shiftKey)) {
+        lineThickness = Math.min(lineThickness + 1.0, 20.0);
+        thicknessDisplay.textContent = `Espessura: ${lineThickness} px (+/-)`;
+    } else if (key === "-") {
+        lineThickness = Math.max(lineThickness - 1.0, 1.0);
+        thicknessDisplay.textContent = `Espessura: ${lineThickness} px (+/-)`;
     }
 
     if (colorOptions[key]) {
