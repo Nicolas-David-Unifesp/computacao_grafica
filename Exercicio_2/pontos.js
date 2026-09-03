@@ -1,6 +1,11 @@
 const canvas = document.getElementById("canvas_pontos");
 const gl = canvas.getContext("webgl2");
 
+/*A ideia é manter a mudança de espessura e cor de ponto com 0 a 9.
+
+*/ 
+
+
 if (!gl) {
     throw new Error("WebGL 2 não é suportado.");
 }
