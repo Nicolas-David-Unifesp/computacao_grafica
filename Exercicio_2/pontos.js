@@ -1,9 +1,7 @@
 const canvas = document.getElementById("canvas_pontos");
 const gl = canvas.getContext("webgl2");
 
-/*A ideia é manter a mudança de espessura e cor de ponto com 0 a 9.
 
-*/ 
 
 if (!gl) {
     throw new Error("WebGL 2 não é suportado.");
@@ -20,7 +18,11 @@ const webglCoordinates =
         "webglCoordinates"
     );
 
-
+    //Vai ser usado para mostrar o modo do desenho - se é linha ou triângulo
+const modeDisplay = 
+    document.getElementById(
+        "modeDisplay"
+    );
 
  // --------------------------------------------------
 // 0. Funções
@@ -106,6 +108,7 @@ function drawTriangle(p1, p2, p3, color) {
 let vertices = new Float32Array([0.0,0.0]);
 let colors = new Float32Array([1.0, 0.0, 0.0]);
 let pointSizes = new Float32Array([10.0]);
+
 
 
 // --------------------------------------------------
