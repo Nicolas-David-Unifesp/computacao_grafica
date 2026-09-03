@@ -82,29 +82,57 @@ function buildBuffers(pointList, color) {
 }
 
 
-function drawLine(p1, p2, color) {// Função para desenhar linha usando o Breseham
+function drawLine(p1, p2) {
     const pts = bresenham(p1.px, p1.py, p2.px, p2.py);
-    buildBuffers(pts, color);
-    drawScene();
+    addPointsToCanvas(pts);
 }
  
-//Função para desenhar triângulo usando o Breseham
-function drawTriangle(p1, p2, p3, color) {
+function drawTriangle(p1, p2, p3) {
     const side1 = bresenham(p1.px, p1.py, p2.px, p2.py);
     const side2 = bresenham(p2.px, p2.py, p3.px, p3.py);
     const side3 = bresenham(p3.px, p3.py, p1.px, p1.py);
-    const pts = [...side1, ...side2, ...side3];
-    buildBuffers(pts, color);
-    drawScene();
+    addPointsToCanvas([...side1, ...side2, ...side3]);
+}
+
+function addPointsToCanvas(pointList) {
+    for (let i = 0; i < pointList.length; i++) {
+        const [wx, wy] = pixelToWebGL(pointList[i].px, pointList[i].py);
+        allPoints.push(wx, wy);
+    }
+    updateBuffers();
 }
 
 
 
-function uploadBuffer(buffer, data) {//Só pra ficar mais limpo na hora de passar os buffers
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+function updateBuffers() {
+    const totalPoints = allPoints.length / 2;
+
+    const verts = new Float32Array(allPoints);
+    const cols  = new Float32Array(totalPoints * 3);
+    const sizes = new Float32Array(totalPoints);
+
+    for (let i = 0; i < totalPoints; i++) {
+        // Define as cores (pode ajustar para branco/amarelo para destacar)
+        cols[i * 3]     = 0.0; 
+        cols[i * 3 + 1] = 0.8; 
+        cols[i * 3 + 2] = 1.0; 
+        sizes[i]        = 2.0; // Tamanho do ponto
+    }
 }
 
+function drawScene() {
+    // Configura o viewport e limpa a tela
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    if (allPoints.length === 0) return;
+
+    // Usa o programa compilado
+    gl.useProgram(program);
+
+    // Renderiza todos os pontos acumulados
+    gl.drawArrays(gl.POINTS, 0, allPoints.length / 2);
+}
 
 
 // --------------------------------------------------
@@ -116,7 +144,7 @@ let colors = new Float32Array([0.0, 0.0, 0.0]);
 let pointSizes = new Float32Array([2.0]);
 let mode = "reta"; // Muda os modos entre reta e triangulo
 let clickBuffer = []; // buffer pra acumular os cliques
-
+let allPoints = []; // buffer pra acumular todos os pontos desenhados
 
 
 // --------------------------------------------------
@@ -311,29 +339,24 @@ document.addEventListener("keydown", (e) => {
 
 canvas.addEventListener("mousedown",mouseClick,false);
   
-function mouseClick(event){
-    // Posição do clique em pixels
+function mouseClick(event) {
     const px = event.offsetX;
     const py = event.offsetY;
 
-    canvasCoordinates.textContent =
-        `Canvas: (${px}, ${py})`;
-
+    canvasCoordinates.textContent = `Canvas: (${px}, ${py})`;
 
     const [wx, wy] = pixelToWebGL(px, py);
-    webglCoordinates.textContent =
-        `WebGL: (${wx.toFixed(3)}, ${wy.toFixed(3)})`;
+    webglCoordinates.textContent = `WebGL: (${wx.toFixed(3)}, ${wy.toFixed(3)})`;
 
-    clickBuffer.push({px, py});
+    clickBuffer.push({ px, py });
 
     if (mode === "reta" && clickBuffer.length === 2) {
-        const[p1, p2] = clickBuffer;
-        drawLine(p1, p2, [0.0, 0.0, 1.0]);
+        const [p1, p2] = clickBuffer;
+        drawLine(p1, p2);
         clickBuffer = [];
-
     } else if (mode === "triangulo" && clickBuffer.length === 3) {
-        const[p1, p2, p3] = clickBuffer;
-        drawTriangle(p1, p2, p3, [0.0, 1.0, 0.0]);
+        const [p1, p2, p3] = clickBuffer;
+        drawTriangle(p1, p2, p3);
         clickBuffer = [];
     }
 }
