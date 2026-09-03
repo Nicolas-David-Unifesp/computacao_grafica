@@ -23,6 +23,21 @@ const modeDisplay =
         "modeDisplay"
     );
 
+const colorDisplay = document.getElementById("colorDisplay");
+
+const colorOptions = {
+    "0": { name: "Ciano", value: [0.0, 0.8, 1.0] },
+    "1": { name: "Vermelho", value: [1.0, 0.0, 0.0] },
+    "2": { name: "Verde", value: [0.0, 1.0, 0.0] },
+    "3": { name: "Azul", value: [0.0, 0.0, 1.0] },
+    "4": { name: "Amarelo", value: [1.0, 1.0, 0.0] },
+    "5": { name: "Magenta", value: [1.0, 0.0, 1.0] },
+    "6": { name: "Laranja", value: [1.0, 0.5, 0.0] },
+    "7": { name: "Branco", value: [1.0, 1.0, 1.0] },
+    "8": { name: "Cinza", value: [0.5, 0.5, 0.5] },
+    "9": { name: "Roxo", value: [0.5, 0.0, 1.0] }
+};
+
  // --------------------------------------------------
 // 0. Funções
 // --------------------------------------------------
@@ -116,9 +131,9 @@ function updateBuffers() {
     const sizes = new Float32Array(totalPoints);
 
     for (let i = 0; i < totalPoints; i++) {
-        cols[i * 3] = 0.0;
-        cols[i * 3 + 1] = 0.8;
-        cols[i * 3 + 2] = 1.0;
+        cols[i * 3] = selectedColor[0];
+        cols[i * 3 + 1] = selectedColor[1];
+        cols[i * 3 + 2] = selectedColor[2];
         sizes[i] = 2.0;
     }
 
@@ -154,6 +169,7 @@ let pointSizes = new Float32Array([2.0]);
 let mode = "reta"; // Muda os modos entre reta e triangulo
 let clickBuffer = []; // buffer pra acumular os cliques
 let allPoints = []; // buffer pra acumular todos os pontos desenhados
+let selectedColor = colorOptions["0"].value;
 
 
 // --------------------------------------------------
@@ -332,6 +348,11 @@ document.addEventListener("keydown", (e) => {
         mode = "triangulo";
         clickBuffer = [];
         modeDisplay.textContent = "Modo: Triângulo  (clique 3× para traçar)";
+    }
+
+    if (colorOptions[key]) {
+        selectedColor = colorOptions[key].value;
+        colorDisplay.textContent = `Cor: ${colorOptions[key].name} (${key})`;
     }
 });
 
