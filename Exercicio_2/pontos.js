@@ -7,7 +7,6 @@ if (!gl) {
     throw new Error("WebGL 2 não é suportado.");
 }
 
-
 const canvasCoordinates =
     document.getElementById(
         "canvasCoordinates"
@@ -101,13 +100,22 @@ function drawTriangle(p1, p2, p3, color) {
 
 
 
+function uploadBuffer(buffer, data) {//Só pra ficar mais limpo na hora de passar os buffers
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+}
+
+
+
 // --------------------------------------------------
 // 1. Vertices e mais
 // --------------------------------------------------
 
 let vertices = new Float32Array([0.0,0.0]);
 let colors = new Float32Array([1.0, 0.0, 0.0]);
-let pointSizes = new Float32Array([10.0]);
+let pointSizes = new Float32Array([2.0]);
+let mode = "reta"; // Muda os modos entre reta e triangulo
+let clickBuffer = []; // buffer pra acumular os cliques
 
 
 
@@ -116,34 +124,16 @@ let pointSizes = new Float32Array([10.0]);
 // --------------------------------------------------
 
 const verticesBuffer = gl.createBuffer();
-
-gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
-
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    vertices,
-    gl.STATIC_DRAW
-);
-
 const colorsBuffer = gl.createBuffer();
-
-gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
-
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    colors,
-    gl.STATIC_DRAW
-);
-
 const pointSizesBuffer = gl.createBuffer();
 
-gl.bindBuffer(gl.ARRAY_BUFFER, pointSizesBuffer);
 
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    pointSizes,
-    gl.STATIC_DRAW
-);
+// Inicializa os buffers com os dados iniciais, sem precisar usar
+//muitas linhas de código à toa
+uploadBuffer(verticesBuffer, vertices);
+uploadBuffer(colorsBuffer, colors);
+uploadBuffer(pointSizesBuffer, pointSizes);
+
 
 // --------------------------------------------------
 // 3. VERTEX SHADER
@@ -164,8 +154,7 @@ void main() {
 }
 
 `;
-//Cada vec tem que ter o mesmo tamanho, então se tenho 2 aposition tenho
-//que ter 2 cores e 2 pointsize, senão o webgl vai dar erro.
+
 
 // --------------------------------------------------
 // 4. FRAGMENT SHADER
@@ -176,7 +165,6 @@ const fragmentShaderSource = `#version 300 es
 precision mediump float;
 
 in vec3 vColor;
-
 out vec4 outColor;
 
 void main() {
@@ -191,22 +179,14 @@ void main() {
 // --------------------------------------------------
 
 function createShader(gl, type, source) {
-
     const shader = gl.createShader(type);
-
     gl.shaderSource(shader, source);
-
     gl.compileShader(shader);
-
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-
         const error = gl.getShaderInfoLog(shader);
-
         gl.deleteShader(shader);
-
         throw new Error(error);
     }
-
     return shader;
 }
 
@@ -229,14 +209,10 @@ const fragmentShader = createShader(
 // --------------------------------------------------
 
 const program = gl.createProgram();
-
 gl.attachShader(program, vertexShader);
 gl.attachShader(program, fragmentShader);
-
 gl.linkProgram(program);
-
 if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-
     throw new Error(
         gl.getProgramInfoLog(program)
     );
@@ -270,9 +246,7 @@ const pointSizeLocation =
 // --------------------------------------------------
 
 gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
-
 gl.enableVertexAttribArray(positionLocation);
-
 gl.vertexAttribPointer(
     positionLocation,
     2,
@@ -283,9 +257,7 @@ gl.vertexAttribPointer(
 );
 
 gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
-
 gl.enableVertexAttribArray(colorLocation);
-
 gl.vertexAttribPointer(
     colorLocation,
     3,
@@ -296,9 +268,7 @@ gl.vertexAttribPointer(
 );
 
 gl.bindBuffer(gl.ARRAY_BUFFER, pointSizesBuffer);
-
 gl.enableVertexAttribArray(pointSizeLocation);
-
 gl.vertexAttribPointer(
     pointSizeLocation,
     1,
@@ -315,7 +285,6 @@ gl.vertexAttribPointer(
 canvas.addEventListener("mousedown",mouseClick,false);
   
 function mouseClick(event){
-
     // Posição do clique em pixels
     const x = event.offsetX;
     const y = event.offsetY;
