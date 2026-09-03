@@ -112,7 +112,7 @@ function uploadBuffer(buffer, data) {//Só pra ficar mais limpo na hora de passa
 // --------------------------------------------------
 
 let vertices = new Float32Array([0.0,0.0]);
-let colors = new Float32Array([1.0, 0.0, 0.0]);
+let colors = new Float32Array([0.0, 0.0, 0.0]);
 let pointSizes = new Float32Array([2.0]);
 let mode = "reta"; // Muda os modos entre reta e triangulo
 let clickBuffer = []; // buffer pra acumular os cliques
