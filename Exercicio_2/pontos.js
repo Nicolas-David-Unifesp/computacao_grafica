@@ -95,6 +95,8 @@ function drawTriangle(p1, p2, p3) {
 }
 
 function addPointsToCanvas(pointList) {
+    allPoints = [];
+
     for (let i = 0; i < pointList.length; i++) {
         const [wx, wy] = pixelToWebGL(pointList[i].px, pointList[i].py);
         allPoints.push(wx, wy);
@@ -102,22 +104,29 @@ function addPointsToCanvas(pointList) {
     updateBuffers();
 }
 
-
+function uploadBuffer(buffer, data) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+}
 
 function updateBuffers() {
     const totalPoints = allPoints.length / 2;
-
     const verts = new Float32Array(allPoints);
-    const cols  = new Float32Array(totalPoints * 3);
+    const cols = new Float32Array(totalPoints * 3);
     const sizes = new Float32Array(totalPoints);
 
     for (let i = 0; i < totalPoints; i++) {
-        // Define as cores (pode ajustar para branco/amarelo para destacar)
-        cols[i * 3]     = 0.0; 
-        cols[i * 3 + 1] = 0.8; 
-        cols[i * 3 + 2] = 1.0; 
-        sizes[i]        = 2.0; // Tamanho do ponto
+        cols[i * 3] = 0.0;
+        cols[i * 3 + 1] = 0.8;
+        cols[i * 3 + 2] = 1.0;
+        sizes[i] = 2.0;
     }
+
+    uploadBuffer(verticesBuffer, verts);
+    uploadBuffer(colorsBuffer, cols);
+    uploadBuffer(pointSizesBuffer, sizes);
+
+    drawScene();
 }
 
 function drawScene() {
@@ -308,13 +317,6 @@ gl.vertexAttribPointer(
 //--------------------------------------------------
 
 gl.clearColor(0.1, 0.1, 0.1, 1.0);
-
-// Ponto em coordenadas de pixel
-const cx = Math.round(canvas.width  / 2);
-const cy = Math.round(canvas.height / 2);
-
-drawLine({ px: cx, py: cy }, { px: cx, py: cy }, [0.0, 0.0, 1.0]);
-
 
 //--------------------------------------------------
 // 9. INTERAÇÃO COM O TECLADO
