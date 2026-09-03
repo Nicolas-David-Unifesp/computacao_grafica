@@ -277,82 +277,63 @@ gl.vertexAttribPointer(
     0,
     0
 );
+//--------------------------------------------------
+
+gl.clearColor(0.1, 0.1, 0.1, 1.0);
+
+// Ponto em coordenadas de pixel
+const cx = Math.round(canvas.width  / 2);
+const cy = Math.round(canvas.height / 2);
+
+drawLine({ px: cx, py: cy }, { px: cx, py: cy }, [0.0, 0.0, 1.0]);
+
+
+//--------------------------------------------------
+// 9. INTERAÇÃO COM O TECLADO
+//--------------------------------------------------
+
+document.addEventListener("keydown", (e) => {
+    const key = e.key.toLowerCase();
+    if (key === "r") {
+        mode = "reta";
+        clickBuffer = [];
+        modeDisplay.textContent = "Modo: Reta  (clique 2× para traçar)";
+    } else if (key === "t") {
+        mode = "triangulo";
+        clickBuffer = [];
+        modeDisplay.textContent = "Modo: Triângulo  (clique 3× para traçar)";
+    }
+});
 
 // --------------------------------------------------
-// 9. INTERAÇÃO COM O MOUSE
+// 10. INTERAÇÃO COM O MOUSE
 // --------------------------------------------------
 
 canvas.addEventListener("mousedown",mouseClick,false);
   
 function mouseClick(event){
     // Posição do clique em pixels
-    const x = event.offsetX;
-    const y = event.offsetY;
+    const px = event.offsetX;
+    const py = event.offsetY;
 
     canvasCoordinates.textContent =
-        `Canvas: (${x}, ${y})`;
+        `Canvas: (${px}, ${py})`;
 
-    // Converter X para o intervalo [-1, 1]
-    const webglX =
-        (x / canvas.width) * 2 - 1;
 
-    // Converter Y para o intervalo [-1, 1]
-    // O sinal é invertido porque o eixo Y do canvas
-    // cresce para baixo e o do WebGL cresce para cima
-    const webglY =
-        -((y / canvas.height) * 2 - 1);
-
+    const [wx, wy] = pixelToWebGL(px, py);
     webglCoordinates.textContent =
-        `WebGL: (${webglX.toFixed(3)}, ${webglY.toFixed(3)})`;
+        `WebGL: (${wx.toFixed(3)}, ${wy.toFixed(3)})`;
 
+    clickBuffer.push({px, py});
 
-    // Atualizar o vetor de vértices
-    vertices = new Float32Array([
-        webglX,
-        webglY
-    ]);
+    if (mode === "reta" && clickBuffer.length === 2) {
+        const[p1, p2] = clickBuffer;
+        drawLine(p1, p2, [0.0, 0.0, 1.0]);
+        clickBuffer = [];
 
-    // Atualizar o conteúdo do buffer na GPU
-    gl.bindBuffer(
-        gl.ARRAY_BUFFER,
-        verticesBuffer
-    );
-
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        vertices,
-        gl.STATIC_DRAW
-    );
-
-    // Redesenhar a cena
-    drawScene();
+    } else if (mode === "triangulo" && clickBuffer.length === 3) {
+        const[p1, p2, p3] = clickBuffer;
+        drawTriangle(p1, p2, p3, [0.0, 1.0, 0.0]);
+        clickBuffer = [];
+    }
 }
-
-// --------------------------------------------------
-// 10. LIMPAR TELA
-// --------------------------------------------------
-
-gl.clearColor(0.1, 0.1, 0.1, 1.0);
-
-gl.clear(gl.COLOR_BUFFER_BIT);
-
-
-// --------------------------------------------------
-// 11. DESENHAR
-// --------------------------------------------------
-
-const numComponents = 2;
-
-gl.useProgram(program);
-
-function drawScene(){
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.useProgram(program);
-    gl.drawArrays(
-        gl.POINTS,
-        0,
-        vertices.length / numComponents
-    );
-}
-
-drawScene();
