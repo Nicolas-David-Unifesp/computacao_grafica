@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercício 3 - Espessura da Reta</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #d0d0d0;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            gap: 0.5rem;
+        }
+        canvas {
+            border: 1px solid #444;
+            cursor: crosshair;
+        }
+        #info {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.85rem;
+        }
+        #modeDisplay {
+            font-size: 0.9rem;
+            color: #7ab8f5;
+        }
+    </style>
+</head>
+<body>
+ 
+    <canvas id="espessuraCanvas" width="600" height="600"></canvas>
+ 
+    <p id="modeDisplay">Modo: Reta  (clique 2× para traçar)</p>
+    <p id="colorDisplay">Cor: Ciano (0)</p>
+ 
+    <div id="info">
+        <p id="canvasCoordinates">Canvas: (300, 300)</p>
+        <p id="webglCoordinates">WebGL: (0.000, 0.000)</p>
+    </div>
+ 
+    <p style="font-size:0.8rem; color:#888;">
+        <kbd>R</kbd> / <kbd>r</kbd> → modo Reta &nbsp;|&nbsp;
+        <kbd>T</kbd> / <kbd>t</kbd> → modo Triângulo
+    </p>
+ 
+    <script src="espessura.js"></script>
+ 
+</body>
+</html>
