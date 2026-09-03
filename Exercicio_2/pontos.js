@@ -54,25 +54,59 @@ function pixelToWebGL(px, py) { //Função para converter coordenadas de pixel p
 }
 
 
+//Função para construir os buffers de vértices, cores e tamanhos de ponto a partir da lista de pontos e da cor especificada
+function buildBuffers(pointList, color) {
+    const n = pointList.length;
+    const verts = new Float32Array(n * 2);
+    const cols  = new Float32Array(n * 3);
+    const sizes = new Float32Array(n);
+ 
+    for (let i = 0; i < n; i++) {
+        const [wx, wy] = pixelToWebGL(pointList[i].px, pointList[i].py);
+        verts[i * 2]     = wx;
+        verts[i * 2 + 1] = wy;
+        cols[i * 3]      = color[0];
+        cols[i * 3 + 1]  = color[1];
+        cols[i * 3 + 2]  = color[2];
+        sizes[i] = 2.0;
+    }
+ 
+    vertices  = verts;
+    colors    = cols;
+    pointSizes = sizes;
+ 
+    uploadBuffer(verticesBuffer,   vertices);
+    uploadBuffer(colorsBuffer,     colors);
+    uploadBuffer(pointSizesBuffer, pointSizes);
+}
+
+
+function drawLine(p1, p2, color) {// Função para desenhar linha usando o Breseham
+    const pts = bresenham(p1.px, p1.py, p2.px, p2.py);
+    buildBuffers(pts, color);
+    drawScene();
+}
+ 
+//Função para desenhar triângulo usando o Breseham
+function drawTriangle(p1, p2, p3, color) {
+    const side1 = bresenham(p1.px, p1.py, p2.px, p2.py);
+    const side2 = bresenham(p2.px, p2.py, p3.px, p3.py);
+    const side3 = bresenham(p3.px, p3.py, p1.px, p1.py);
+    const pts = [...side1, ...side2, ...side3];
+    buildBuffers(pts, color);
+    drawScene();
+}
+
+
 
 // --------------------------------------------------
-// 1. VERTICES
+// 1. Vertices e mais
 // --------------------------------------------------
 
 let vertices = new Float32Array([0.0,0.0]);
-
-
-// --------------------------------------------------
-// 1. CORES
-// --------------------------------------------------
-
 let colors = new Float32Array([1.0, 0.0, 0.0]);
-
-// --------------------------------------------------
-// 1. TAMANHO DOS PONTOS
-// --------------------------------------------------
-
 let pointSizes = new Float32Array([10.0]);
+
 
 // --------------------------------------------------
 // 2. BUFFERS
