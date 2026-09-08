@@ -211,7 +211,7 @@ function atualizaPlacar() {
     placarElement.textContent = `${pontuacao_esquerda} : ${pontuacao_direita}`;
 }
 
-function reiniciaJogo() {
+function reiniciaproximo() {
     txBola = 0.0;
     tyBola = 0.0;
 
@@ -226,6 +226,12 @@ function reiniciaJogo() {
     MbolaCentro = m3.translation(txBola, tyBola);
     jogoPausado = false;
     atualizaPlacar();
+}
+
+function reinicia_Jogo(){
+    pontuacao_esquerda = 0;
+    pontuacao_direita = 0;
+    reiniciaproximo();
 }
 
 
@@ -420,6 +426,11 @@ window.addEventListener("keydown", (event) => {
 
     if(jogoPausado) return;
 
+     if(key === "r") {
+        reiniciaJogo();
+        return;
+    }
+
     if (event.key === "ArrowUp") keys.ArrowUp = true;
     if (event.key === "ArrowDown") keys.ArrowDown = true;
     if (key === "w") keys.w = true;
@@ -475,7 +486,7 @@ function atualizaAnimacao(){
         }
 
         atualizaPlacar();
-        reiniciaJogo();
+        reiniciaproximo();
     }
        
     tyBola += tyBola_offset;
