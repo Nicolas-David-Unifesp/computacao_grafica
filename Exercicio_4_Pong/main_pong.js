@@ -202,31 +202,13 @@ function verificaColisaoBarra(xBarra, yBarra, lado) {
             txBola_offset = -Math.abs(txBola_offset);
         }
 
-        // opcional: dá um efeito de "quicar" na vertical conforme
-        // a bola toca em diferentes pontos da barra
         tyBola_offset += (tyBola - yBarra) * 0.08;
     }
 }
 
-
-function verificaColisaoBarra(xBarra, yBarra, lado) {
-    const colisaoX =
-        Math.abs(txBola - xBarra) <= (larguraBarra / 2) + raioBola;
-
-    const colisaoY =
-        Math.abs(tyBola - yBarra) <= (alturaBarra / 2) + raioBola;
-
-    if (colisaoX && colisaoY) {
-        if (lado === "esquerda" && txBola_offset < 0) {
-            txBola_offset = Math.abs(txBola_offset);
-        }
-
-        if (lado === "direita" && txBola_offset > 0) {
-            txBola_offset = -Math.abs(txBola_offset);
-        }
-        //Pra bola quicar
-        tyBola_offset += (tyBola - yBarra) * 0.08;
-    }
+function atualizaPlacar() {
+    const placarElement = document.getElementById("placar");
+    placarElement.textContent = `${pontuacao_esquerda} : ${pontuacao_direita}`;
 }
 
 function reiniciaJogo() {
@@ -243,6 +225,7 @@ function reiniciaJogo() {
     MbarraDireita = m3.translation(0.9, 0.0);
     MbolaCentro = m3.translation(txBola, tyBola);
     jogoPausado = false;
+    atualizaPlacar();
 }
 
 
@@ -469,8 +452,8 @@ let jogoPausado = false;
 const larguraBarra = 0.1;
 const alturaBarra = 0.4;
 const raioBola = 0.05;
-const pontuacao_esquerda = 0;
-const pontuacao_direita = 0;
+let pontuacao_esquerda = 0;
+let pontuacao_direita = 0;
 
 
 
@@ -485,15 +468,13 @@ function atualizaAnimacao(){
     txBola += txBola_offset;
 
     if(txBola > 0.9 || txBola<-0.9){
-        txBola_offset = -txBola_offset;
-        jogoPausado = true; // Pausa o jogo quando a bola sai da tela
         if (txBola > 0.9) {
-            // A bola saiu pela direita, ponto para a esquerda
             pontuacao_esquerda++;
         } else {
-            // A bola saiu pela esquerda, ponto para a direita
             pontuacao_direita++;
         }
+
+        atualizaPlacar();
         reiniciaJogo();
     }
        
