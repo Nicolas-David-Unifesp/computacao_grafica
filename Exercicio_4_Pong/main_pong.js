@@ -195,11 +195,11 @@ function verificaColisaoBarra(xBarra, yBarra, lado) {
 
     if (colisaoX && colisaoY) {
         if (lado === "esquerda" && txBola_offset < 0) {
-            txBola_offset = Math.abs(txBola_offset);
+            txBola_offset = Math.abs(txBola_offset) - 0.0005;
         }
 
         if (lado === "direita" && txBola_offset > 0) {
-            txBola_offset = -Math.abs(txBola_offset);
+            txBola_offset = -Math.abs(txBola_offset)+ 0.0005;
         }
 
         tyBola_offset += (tyBola - yBarra) * 0.08;
@@ -215,8 +215,8 @@ function reiniciaproximo() {
     txBola = 0.0;
     tyBola = 0.0;
 
-    txBola_offset = 0.005;
-    tyBola_offset = 0.005;
+    txBola_offset = 0.01;
+    tyBola_offset = 0.01;
 
     tyBE = 0.0;
     tyBD = 0.0;
