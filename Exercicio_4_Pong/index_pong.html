@@ -14,6 +14,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 24px;
             background: #111;
             font-family: Arial, sans-serif;
         }
@@ -24,6 +25,29 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
+        }
+
+        .game-area {
+            position: relative;
+            width: 600px;
+            height: 600px;
+        }
+
+        .field-label {
+            position: absolute;
+            top: -30px;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .field-label.left {
+            left: 0;
+        }
+
+        .field-label.right {
+            right: 0;
         }
 
         #placar {
@@ -40,14 +64,69 @@
             border: 2px solid white;
             background: #1a1a1a;
         }
+
+        .controles {
+            background: #1a1a1a;
+            border: 2px solid white;
+            border-radius: 10px;
+            color: white;
+            min-width: 220px;
+            padding: 16px 18px;
+        }
+
+        .controles h3 {
+            margin: 0 0 12px 0;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .controles ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .controles li {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding-bottom: 8px;
+        }
+
+        .tecla {
+            font-weight: bold;
+            color: #ffd166;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div id="placar">0 : 0</div>
-        <canvas id="canvas_pong" width="600" height="600"></canvas>
+
+        <div class="game-area">
+            <div class="field-label left">Jogador 1</div>
+            <div class="field-label right">Jogador 2</div>
+            <canvas id="canvas_pong" width="600" height="600"></canvas>
+        </div>
     </div>
+
+    <aside class="controles">
+        <h3>Controles</h3>
+        <ul>
+            <li><span class="tecla">W</span><span>Sobe - Jogador 1</span></li>
+            <li><span class="tecla">S</span><span>Desce - Jogador 1</span></li>
+            <li><span class="tecla">↑</span><span>Sobe - Jogador 2</span></li>
+            <li><span class="tecla">↓</span><span>Desce - Jogador 2</span></li>
+            <li><span class="tecla">P</span><span>Pause / continua</span></li>
+            <li><span class="tecla">R</span><span>Reinicia o jogo</span></li>
+        </ul>
+    </aside>
 
     <script src="m3.js"></script>
     <script src="main_pong.js"></script>
