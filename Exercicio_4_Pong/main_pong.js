@@ -427,13 +427,6 @@ window.addEventListener("keydown", (event) => {
         return;
     }
 
-    if (key === " ") {
-        if (fimDeJogo) {
-            reinicia_Jogo();
-        }
-        return;
-    }
-
     if(jogoPausado) return;
 
      if(key === "r") {
