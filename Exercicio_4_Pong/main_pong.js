@@ -6,7 +6,7 @@ if (!gl) {
 }
 
 // --------------------------------------------------
-// VERTICES E CORES
+// FUNÇÕES
 // --------------------------------------------------
 
 function verticesBarra(){
@@ -36,6 +36,206 @@ function verticesBola(){
 
     return new Float32Array(vertices);
 }
+
+function drawScene(){
+    
+    atualizaAnimacao();
+
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(program);
+    drawBarraEsquerda();
+    drawBarraDireita();
+    drawBolaCentro();
+    
+    requestAnimationFrame(drawScene);
+}
+
+function drawBarraEsquerda(){
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+
+    gl.bufferData(
+        gl.ARRAY_BUFFER,
+        verticesBarraEsquerda,
+        gl.STATIC_DRAW
+    );
+
+    gl.enableVertexAttribArray(positionLocation);
+
+    gl.vertexAttribPointer(
+        positionLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+    );
+
+    gl.uniform3fv(
+        colorLocation,
+        corBarra
+    );
+
+    gl.uniformMatrix3fv(
+        transformLocation,
+        false,
+        MbarraEsquerda
+    );
+
+    gl.drawArrays(
+        gl.TRIANGLES,
+        0,
+        verticesBarraEsquerda.length / numComponents
+    );
+
+}
+
+function drawBarraDireita(){
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+
+    gl.bufferData(
+        gl.ARRAY_BUFFER,
+        verticesBarraDireita,
+        gl.STATIC_DRAW
+    );
+
+    gl.enableVertexAttribArray(positionLocation);
+
+    gl.vertexAttribPointer(
+        positionLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+    );
+
+    gl.uniform3fv(
+        colorLocation,
+        corBarra
+    
+    );
+
+    gl.uniformMatrix3fv(
+        transformLocation,
+        false,
+        MbarraDireita
+    );
+
+    gl.drawArrays(
+        gl.TRIANGLES,
+        0,
+        verticesBarraDireita.length / numComponents
+    );
+
+}
+
+function drawBolaCentro(){
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+
+    gl.bufferData(
+        gl.ARRAY_BUFFER,
+        verticesBolaCentro,
+        gl.STATIC_DRAW
+    );
+
+    gl.enableVertexAttribArray(positionLocation);
+
+    gl.vertexAttribPointer(
+        positionLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+    );
+
+    gl.uniform3fv(
+        colorLocation,
+        corBolaCentro
+    );
+
+    gl.uniformMatrix3fv(
+        transformLocation,
+        false,
+        MbolaCentro
+    );
+
+    gl.drawArrays(
+        gl.TRIANGLES,
+        0,
+        verticesBolaCentro.length / numComponents
+    );
+
+}
+
+
+function atualizaBarras() {
+    if (keys.w) tyBE += paddleSpeed;
+    if (keys.s) tyBE -= paddleSpeed;
+    if (keys.ArrowUp) tyBD += paddleSpeed;
+    if (keys.ArrowDown) tyBD -= paddleSpeed;
+
+    const limiteY = 0.7;
+    tyBE = Math.max(-limiteY, Math.min(limiteY, tyBE));
+    tyBD = Math.max(-limiteY, Math.min(limiteY, tyBD));
+
+    MbarraEsquerda = m3.translation(-0.9, tyBE);
+    MbarraDireita = m3.translation(0.9, tyBD);
+}
+
+function verificaColisaoBarra(xBarra, yBarra, lado) {
+    const colisaoX =
+        Math.abs(txBola - xBarra) <= (larguraBarra / 2) + raioBola;
+
+    const colisaoY =
+        Math.abs(tyBola - yBarra) <= (alturaBarra / 2) + raioBola;
+
+    if (colisaoX && colisaoY) {
+        if (lado === "esquerda" && txBola_offset < 0) {
+            txBola_offset = Math.abs(txBola_offset);
+        }
+
+        if (lado === "direita" && txBola_offset > 0) {
+            txBola_offset = -Math.abs(txBola_offset);
+        }
+
+        // opcional: dá um efeito de "quicar" na vertical conforme
+        // a bola toca em diferentes pontos da barra
+        tyBola_offset += (tyBola - yBarra) * 0.08;
+    }
+}
+
+
+function verificaColisaoBarra(xBarra, yBarra, lado) {
+    const colisaoX =
+        Math.abs(txBola - xBarra) <= (larguraBarra / 2) + raioBola;
+
+    const colisaoY =
+        Math.abs(tyBola - yBarra) <= (alturaBarra / 2) + raioBola;
+
+    if (colisaoX && colisaoY) {
+        if (lado === "esquerda" && txBola_offset < 0) {
+            txBola_offset = Math.abs(txBola_offset);
+        }
+
+        if (lado === "direita" && txBola_offset > 0) {
+            txBola_offset = -Math.abs(txBola_offset);
+        }
+        //Pra bola quicar
+        tyBola_offset += (tyBola - yBarra) * 0.08;
+    }
+}
+
+
+
+
+// --------------------------------------------------
+// ATRIBUIÇÃO DE VÉRTICES
+// --------------------------------------------------
+
 
 let verticesBarraDireita = verticesBarra();
 
@@ -229,139 +429,6 @@ window.addEventListener("keyup", (event) => {
     if (key === "s") keys.s = false;
 });
 
-function drawScene(){
-    
-    atualizaAnimacao();
-
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.useProgram(program);
-    drawBarraEsquerda();
-    drawBarraDireita();
-    drawBolaCentro();
-    
-    requestAnimationFrame(drawScene);
-}
-
-function drawBarraEsquerda(){
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
-
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        verticesBarraEsquerda,
-        gl.STATIC_DRAW
-    );
-
-    gl.enableVertexAttribArray(positionLocation);
-
-    gl.vertexAttribPointer(
-        positionLocation,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-    );
-
-    gl.uniform3fv(
-        colorLocation,
-        corBarra
-    );
-
-    gl.uniformMatrix3fv(
-        transformLocation,
-        false,
-        MbarraEsquerda
-    );
-
-    gl.drawArrays(
-        gl.TRIANGLES,
-        0,
-        verticesBarraEsquerda.length / numComponents
-    );
-
-}
-
-function drawBarraDireita(){
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
-
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        verticesBarraDireita,
-        gl.STATIC_DRAW
-    );
-
-    gl.enableVertexAttribArray(positionLocation);
-
-    gl.vertexAttribPointer(
-        positionLocation,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-    );
-
-    gl.uniform3fv(
-        colorLocation,
-        corBarra
-    
-    );
-
-    gl.uniformMatrix3fv(
-        transformLocation,
-        false,
-        MbarraDireita
-    );
-
-    gl.drawArrays(
-        gl.TRIANGLES,
-        0,
-        verticesBarraDireita.length / numComponents
-    );
-
-}
-
-function drawBolaCentro(){
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
-
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        verticesBolaCentro,
-        gl.STATIC_DRAW
-    );
-
-    gl.enableVertexAttribArray(positionLocation);
-
-    gl.vertexAttribPointer(
-        positionLocation,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-    );
-
-    gl.uniform3fv(
-        colorLocation,
-        corBolaCentro
-    );
-
-    gl.uniformMatrix3fv(
-        transformLocation,
-        false,
-        MbolaCentro
-    );
-
-    gl.drawArrays(
-        gl.TRIANGLES,
-        0,
-        verticesBolaCentro.length / numComponents
-    );
-
-}
 
 // --------------------------------------------------
 // PARÂMETROS ANIMAÇÃO
@@ -375,29 +442,34 @@ let txBola = 0.0;
 let tyBola = 0.0;
 let txBola_offset = 0.005;
 let tyBola_offset = 0.005;
+const larguraBarra = 0.1;
+const alturaBarra = 0.4;
+const raioBola = 0.05;
+const pontuacao_esquerda = 0;
+const pontuacao_direita = 0;
 
-function atualizaBarras() {
-    if (keys.w) tyBE += paddleSpeed;
-    if (keys.s) tyBE -= paddleSpeed;
-    if (keys.ArrowUp) tyBD += paddleSpeed;
-    if (keys.ArrowDown) tyBD -= paddleSpeed;
 
-    const limiteY = 0.7;
-    tyBE = Math.max(-limiteY, Math.min(limiteY, tyBE));
-    tyBD = Math.max(-limiteY, Math.min(limiteY, tyBD));
-
-    MbarraEsquerda = m3.translation(-0.9, tyBE);
-    MbarraDireita = m3.translation(0.9, tyBD);
-}
 
 function atualizaAnimacao(){
     atualizaBarras();
 
+    verificaColisaoBarra(-0.9, tyBE, "esquerda");
+    verificaColisaoBarra(0.9, tyBD, "direita");
+
     txBola += txBola_offset;
 
-    if(txBola > 0.9 || txBola<-0.9)
+    if(txBola > 0.9 || txBola<-0.9){
         txBola_offset = -txBola_offset;
-
+        
+        if (txBola > 0.9) {
+            // A bola saiu pela direita, ponto para a esquerda
+            pontuacao_esquerda++;
+        } else {
+            // A bola saiu pela esquerda, ponto para a direita
+            pontuacao_direita++;
+        }
+    }
+       
     tyBola += tyBola_offset;
     if(tyBola > 1.0 || tyBola<-1.0)
         tyBola_offset = -tyBola_offset;
