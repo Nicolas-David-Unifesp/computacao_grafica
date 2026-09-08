@@ -229,6 +229,22 @@ function verificaColisaoBarra(xBarra, yBarra, lado) {
     }
 }
 
+function reiniciaJogo() {
+    txBola = 0.0;
+    tyBola = 0.0;
+
+    txBola_offset = 0.005;
+    tyBola_offset = 0.005;
+
+    tyBE = 0.0;
+    tyBD = 0.0;
+
+    MbarraEsquerda = m3.translation(-0.9, 0.0);
+    MbarraDireita = m3.translation(0.9, 0.0);
+    MbolaCentro = m3.translation(txBola, tyBola);
+    jogoPausado = false;
+}
+
 
 
 
@@ -414,6 +430,13 @@ const paddleSpeed = 0.04;
 window.addEventListener("keydown", (event) => {
     const key = event.key.toLowerCase();
 
+    if (key === "p") {
+        jogoPausado = !jogoPausado;
+        return;
+    }
+
+    if(jogoPausado) return;
+
     if (event.key === "ArrowUp") keys.ArrowUp = true;
     if (event.key === "ArrowDown") keys.ArrowDown = true;
     if (key === "w") keys.w = true;
@@ -442,6 +465,7 @@ let txBola = 0.0;
 let tyBola = 0.0;
 let txBola_offset = 0.005;
 let tyBola_offset = 0.005;
+let jogoPausado = false;
 const larguraBarra = 0.1;
 const alturaBarra = 0.4;
 const raioBola = 0.05;
@@ -451,6 +475,8 @@ const pontuacao_direita = 0;
 
 
 function atualizaAnimacao(){
+
+    if(jogoPausado) return;
     atualizaBarras();
 
     verificaColisaoBarra(-0.9, tyBE, "esquerda");
@@ -460,7 +486,7 @@ function atualizaAnimacao(){
 
     if(txBola > 0.9 || txBola<-0.9){
         txBola_offset = -txBola_offset;
-        
+        jogoPausado = true; // Pausa o jogo quando a bola sai da tela
         if (txBola > 0.9) {
             // A bola saiu pela direita, ponto para a esquerda
             pontuacao_esquerda++;
@@ -468,6 +494,7 @@ function atualizaAnimacao(){
             // A bola saiu pela esquerda, ponto para a direita
             pontuacao_direita++;
         }
+        reiniciaJogo();
     }
        
     tyBola += tyBola_offset;
