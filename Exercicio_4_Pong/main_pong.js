@@ -231,7 +231,10 @@ function reiniciaproximo() {
 function reinicia_Jogo(){
     pontuacao_esquerda = 0;
     pontuacao_direita = 0;
+    fimDeJogo = false;
+    jogoPausado = false;
     reiniciaproximo();
+    atualizaPlacar();
 }
 
 
@@ -424,6 +427,13 @@ window.addEventListener("keydown", (event) => {
         return;
     }
 
+    if (key === " ") {
+        if (fimDeJogo) {
+            reinicia_Jogo();
+        }
+        return;
+    }
+
     if(jogoPausado) return;
 
      if(key === "r") {
@@ -460,17 +470,26 @@ let tyBola = 0.0;
 let txBola_offset = 0.005;
 let tyBola_offset = 0.005;
 let jogoPausado = false;
+let fimDeJogo = false;
 const larguraBarra = 0.1;
 const alturaBarra = 0.4;
 const raioBola = 0.05;
 let pontuacao_esquerda = 0;
 let pontuacao_direita = 0;
 
+function exibeVencedor() {
+    const placarElement = document.getElementById("placar");
 
+    if (pontuacao_esquerda >= 5) {
+        placarElement.textContent = "Jogador 1 venceu!";
+    } else if (pontuacao_direita >= 5) {
+        placarElement.textContent = "Jogador 2 venceu!";
+    }
+}
 
 function atualizaAnimacao(){
 
-    if(jogoPausado) return;
+    if(jogoPausado || fimDeJogo) return;
     atualizaBarras();
 
     verificaColisaoBarra(-0.9, tyBE, "esquerda");
@@ -486,6 +505,13 @@ function atualizaAnimacao(){
         }
 
         atualizaPlacar();
+
+        if (pontuacao_esquerda >= 5 || pontuacao_direita >= 5) {
+            fimDeJogo = true;
+            exibeVencedor();
+            return;
+        }
+
         reiniciaproximo();
     }
        
