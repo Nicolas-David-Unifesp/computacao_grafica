@@ -292,10 +292,8 @@ function roadVertices() {
 // ==================================================
 
 function Robot_BodyworkVertices() {
-
-    const vertices = rectangleVertices(0.0,-0.6,0.2,0.5);
-
-    return new Float32Array(vertices);
+  const vertices = rectangleVertices(-0.1, -0.6, 0.2, 0.5);
+  return new Float32Array(vertices);
 }
 
 function Robot_headVertices() {
@@ -338,12 +336,12 @@ function Robot_other_headVertices() {
 }
 
 function Robot_ArmVertices() {
-    return new Float32Array(rectangleVertices(0.0, -0.02, 0.12, 0.04));
+    return new Float32Array(rectangleVertices(0.0, -0.02, 0.18, 0.04));
 }
 
 // Perna: retângulo fino vertical, pivô no topo
 function Robot_LegVertices() {
-    return new Float32Array(rectangleVertices(-0.02, 0.0, 0.04, 0.14));
+    return new Float32Array(rectangleVertices(-0.08, -0.05, 0.04, 0.14));
 }
 
 
@@ -434,6 +432,19 @@ class Robot_Other_Head extends SceneObject {
     }
 }
 
+
+class Robot_Arm extends SceneObject {
+    constructor(color) {
+        super(Robot_ArmVertices(), color);
+    }
+}
+
+class Robot_Leg extends SceneObject {
+    constructor(color) {
+        super(Robot_LegVertices(), color);
+    }
+}
+
 // ==================================================
 // CLASSE Robot
 // ==================================================
@@ -444,6 +455,15 @@ class Robot {
         this.tx = tx;
         this.ty = ty;
         this.speed = speed;
+        this.walkPhase = 0;
+
+        const armColor  = new Float32Array([0.8, 0.8, 0.8]);
+        const legColor  = new Float32Array([0.6, 0.6, 0.6]);
+
+        this.leftArm  = new Robot_Arm(color);
+        this.rightArm = new Robot_Arm(color);
+        this.leftLeg  = new Robot_Leg(color);
+        this.rightLeg = new Robot_Leg(color);
 
         this.Robot_Bodywork = new Robot_Bodywork(color);
         
@@ -455,29 +475,54 @@ class Robot {
     }
 
     move() {
-        this.tx += this.speed;
+    this.tx += this.speed;
 
-        if (this.tx > 1.8 || this.tx < -1.8) {
-            this.speed = -this.speed;
-        }
+    if (this.tx > 1.8 || this.tx < -1.8) {
+        this.speed = -this.speed;
+    }
+    const RobotTransform = m3.translation(this.tx, this.ty);
 
-        const RobotTransform = m3.translation(this.tx, this.ty);
+    this.Robot_Bodywork.updateModelTransform(RobotTransform);
 
-        // Aplica a transformação base ao corpo e à cabeça
-        this.Robot_Bodywork.updateModelTransform(RobotTransform);
-        
-        // Posição da cabeça acima do corpo
-        const headOffset = m3.translation(0.1, -0.1); // Ajustado para centralizar no corpo
-        const headTransform = m3.multiply(RobotTransform, headOffset);
-        
-        this.Robot_Head.updateModelTransform(headTransform);
-        this.Robot_Other_Head.updateModelTransform(headTransform);
+    const headOffset = m3.translation(0.0, -0.1);
+    const headTransform = m3.multiply(RobotTransform, headOffset);
+    this.Robot_Head.updateModelTransform(headTransform);
+    this.Robot_Other_Head.updateModelTransform(headTransform);
+
+    this.walkPhase += 0.08;
+    const swing = Math.sin(this.walkPhase) * 0.3;
+
+    let armLPivot = m3.translation(-0.01, -0.25);
+    let armLRot   = m3.rotate(armLPivot, swing);
+    let armLTf    = m3.multiply(RobotTransform, armLRot);
+    let mirrorL   = m3.multiply(armLTf, m3.scaling(-1, 1));
+    this.leftArm.updateModelTransform(mirrorL);
+
+    let armRPivot = m3.translation(-0.01, -0.25);
+    let armRRot   = m3.rotate(armRPivot, -swing);
+    let armRTf    = m3.multiply(RobotTransform, armRRot);
+    this.rightArm.updateModelTransform(armRTf);
+
+    let legLPivot = m3.translation(-0.06, -0.6);
+    let legLRot   = m3.rotate(legLPivot, -swing);
+    let legLTf    = m3.multiply(RobotTransform, legLRot);
+    let mirrorLL  = m3.multiply(legLTf, m3.scaling(-1, 1));
+    this.leftLeg.updateModelTransform(mirrorLL);
+
+    let legRPivot = m3.translation(0.06, -0.6);
+    let legRRot   = m3.rotate(legRPivot, swing);
+    let legRTf    = m3.multiply(RobotTransform, legRRot);
+    this.rightLeg.updateModelTransform(legRTf);
     }
 
-    draw(renderer) {
-        renderer.draw(this.Robot_Bodywork);
-        renderer.draw(this.Robot_Head);
-        renderer.draw(this.Robot_Other_Head);
+   draw(renderer) {
+    renderer.draw(this.leftLeg);
+    renderer.draw(this.rightLeg);
+    renderer.draw(this.Robot_Bodywork);   // corpo na frente das pernas
+    renderer.draw(this.leftArm);
+    renderer.draw(this.rightArm);
+    renderer.draw(this.Robot_Head);
+    renderer.draw(this.Robot_Other_Head);
     }
 }
 
