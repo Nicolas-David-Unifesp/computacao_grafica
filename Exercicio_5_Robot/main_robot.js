@@ -288,12 +288,51 @@ function roadVertices() {
 
 
 // ==================================================
-// CAR BODYWORK VERTICES
+// Robot BODYWORK VERTICES
 // ==================================================
 
 function Robot_BodyworkVertices() {
 
     const vertices = rectangleVertices(0.0,-0.6,0.2,0.5);
+
+    return new Float32Array(vertices);
+}
+
+function Robot_headVertices() {
+    let vertices = [];
+
+    //Cabeça (Retângulo principal)
+    vertices.push(...rectangleVertices(-0.15, -0.1, 0.3, 0.3));
+
+    // 5. Haste da Antena
+    vertices.push(...rectangleVertices(-0.015, 0.2, 0.03, 0.1));
+
+    return new Float32Array(vertices);
+}
+
+function Robot_other_headVertices() {
+    let vertices = [];
+
+    //Olho Esquerdo
+    const leftEye = circleVertices(0.035, 16);
+    for (let i = 0; i < leftEye.length; i += 2) {
+        vertices.push(leftEye[i] - 0.07, leftEye[i + 1] + 0.1);
+    }
+
+    //Olho Direito (Círculo)
+    const rightEye = circleVertices(0.035, 16);
+    for (let i = 0; i < rightEye.length; i += 2) {
+        vertices.push(rightEye[i] + 0.07, rightEye[i + 1] + 0.1);
+    }
+
+    //Esfera da Antena
+    const antennaTop = circleVertices(0.03, 16);
+    for (let i = 0; i < antennaTop.length; i += 2) {
+        vertices.push(antennaTop[i], antennaTop[i + 1] + 0.32);
+    }
+
+    // Boca
+    vertices.push(...rectangleVertices(-0.08, -0.05, 0.16, 0.04));
 
     return new Float32Array(vertices);
 }
@@ -351,10 +390,10 @@ class Road extends SceneObject {
 
 
 // ==================================================
-// CLASSE CAR BODYWORK
+// CLASSE Robot BODYWORK
 // ==================================================
 
-class CarBodywork extends SceneObject {
+class Robot_Bodywork extends SceneObject {
 
     constructor(color) {
 
@@ -368,17 +407,36 @@ class CarBodywork extends SceneObject {
 }
 
 
+class Robot_Head extends SceneObject {
+    constructor(color) {
+        super(
+            Robot_headVertices(),
+            color
+        );
+    }
+}
+
+class Robot_Eyes extends SceneObject {
+    constructor(color) {
+        super(
+            Robot_other_headVertices(),
+            color
+        );
+    }
+}
+
+
 // ==================================================
-// CLASSE CAR WHEEL
+// CLASSE Robot WHEEL
 // ==================================================
 
-/*class CarWheel extends SceneObject {
+/*class RobotWheel extends SceneObject {
 
     constructor(xPosition, angularSpeed) {
 
         super(
 
-            carWheelVertices(),
+            RobotWheelVertices(),
 
             new Float32Array([
                 0.5,
@@ -406,7 +464,7 @@ class CarBodywork extends SceneObject {
     }
 
 
-    updateModelTransform(carModelTransform) {
+    updateModelTransform(RobotModelTransform) {
 
         const localTransform =
 
@@ -418,7 +476,7 @@ class CarBodywork extends SceneObject {
         this.modelTransform =
 
             m3.multiply(
-                carModelTransform,
+                RobotModelTransform,
                 localTransform
             );
     }
@@ -426,53 +484,49 @@ class CarBodywork extends SceneObject {
 
 
 // ==================================================
-// CLASSE CAR
+// CLASSE Robot
 // ==================================================
 
-class Car {
-
+class Robot {
+    
     constructor(tx, ty, color, speed) {
-
         this.tx = tx;
-
         this.ty = ty;
-
         this.speed = speed;
 
-        this.angularSpeed = -5.0;
-
-        this.carBodywork = new CarBodywork(color);
-
-
-        /*this.leftWheel = new CarWheel(-0.1,this.angularSpeed);
-
-        this.rightWheel = new CarWheel(0.1, this.angularSpeed);*/
+        this.Robot_Bodywork = new Robot_Bodywork(color);
+        
+        // Instancia a cabeça (usando uma cor diferente, ex: azul/cinza)
+        this.Robot_Head = new Robot_Head(new Float32Array(color));
+        
+        // Instancia os olhos (usando uma cor diferente, ex: amarelo)
+        this.Robot_Eyes = new Robot_Eyes(new Float32Array([1.0, 1.0, 0.0]));
     }
 
     move() {
-
         this.tx += this.speed;
 
-        if ( this.tx > 1.8 || this.tx < -1.8) {
-
+        if (this.tx > 1.8 || this.tx < -1.8) {
             this.speed = -this.speed;
-            
         }
 
-        const carTransform = m3.translation(this.tx,this.ty);
+        const RobotTransform = m3.translation(this.tx, this.ty);
 
-        this.carBodywork.updateModelTransform(carTransform);
-
+        // Aplica a transformação base ao corpo e à cabeça
+        this.Robot_Bodywork.updateModelTransform(RobotTransform);
+        
+        // Posição da cabeça acima do corpo
+        const headOffset = m3.translation(0.1, -0.1); // Ajustado para centralizar no corpo
+        const headTransform = m3.multiply(RobotTransform, headOffset);
+        
+        this.Robot_Head.updateModelTransform(headTransform);
+        this.Robot_Eyes.updateModelTransform(headTransform);
     }
 
     draw(renderer) {
-
-        renderer.draw(this.carBodywork);
-
-        /*
-        renderer.draw(this.leftWheel);
-
-        renderer.draw(this.rightWheel);*/
+        renderer.draw(this.Robot_Bodywork);
+        renderer.draw(this.Robot_Head);
+        renderer.draw(this.Robot_Eyes);
     }
 }
 
@@ -493,17 +547,17 @@ class Scene {
 
         this.road = new Road();
 
-        this.cars = [
+        this.Robots = [
 
-            new Car(0.5,0.2,new Float32Array([1.0,0.0,0.0]),0.003)
+            new Robot(0.5,0.2,new Float32Array([1.0,0.0,0.0]),0.003)
 
         ];
     }
 
     update() {
 
-        for (const car of this.cars) {
-            car.move();
+        for (const Robot of this.Robots) {
+            Robot.move();
         }
     }
 
@@ -515,8 +569,8 @@ class Scene {
 
         this.road.draw(this.renderer);
 
-        for (const car of this.cars) {
-            car.draw(this.renderer);
+        for (const Robot of this.Robots) {
+            Robot.draw(this.renderer);
         }
     }
 
