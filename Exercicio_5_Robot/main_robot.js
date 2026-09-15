@@ -281,7 +281,7 @@ function circleVertices(radius,numSegments){
 
 function roadVertices() {
 
-    const vertices = rectangleVertices(-2.0,-0.4,4.0,0.8);
+    const vertices = rectangleVertices(-2.0,-0.4,4.0,0.8);//x,y,width,height
 
     return new Float32Array(vertices);
 }
@@ -291,13 +291,11 @@ function roadVertices() {
 // CAR BODYWORK VERTICES
 // ==================================================
 
-function carBodyworkVertices() {
+function Robot_BodyworkVertices() {
 
     const vertices = [];
 
-    vertices.push(...rectangleVertices(-0.2,0.0,0.1,0.1));
-    vertices.push(...rectangleVertices(-0.1,0.0,0.2,0.2));
-    vertices.push(...rectangleVertices(0.1,0.0,0.1,0.1));
+    vertices.push(...rectangleVertices(0.0,0.0,0.4,0.4));
 
     return new Float32Array(vertices);
 }
@@ -519,13 +517,7 @@ class Scene {
 
         this.cars = [
 
-            new Car(0.5,0.2,new Float32Array([1.0,0.0,0.0]),0.003),
-
-            new Car(0.0,0.0,new Float32Array([1.0,1.0,0.0]),0.004),
-
-            new Car(-0.2,-0.1,new Float32Array([0.0,0.0,1.0]),0.005),
-
-            new Car(-0.9,-0.3,new Float32Array([0.0,1.0,0.0]),0.001)
+            new Car(0.5,0.2,new Float32Array([1.0,0.0,0.0]),0.003)
 
         ];
     }
