@@ -281,7 +281,7 @@ function circleVertices(radius,numSegments){
 
 function roadVertices() {
 
-    const vertices = rectangleVertices(-2.0,-0.4,4.0,0.8);//x,y,width,height
+    const vertices = rectangleVertices(-2.0,-1,4.0,0.8);//x,y,width,height
 
     return new Float32Array(vertices);
 }
@@ -293,22 +293,12 @@ function roadVertices() {
 
 function Robot_BodyworkVertices() {
 
-    const vertices = rectangleVertices(0.0,0.0,0.4,0.4);
+    const vertices = rectangleVertices(0.0,-0.6,0.2,0.5);
 
     return new Float32Array(vertices);
 }
 
 
-// ==================================================
-// CAR WHEEL VERTICES
-// ==================================================
-
-function carWheelVertices() {
-
-    const vertices = circleVertices(0.05,6);
-
-    return new Float32Array(vertices);
-}
 
 
 // ==================================================
@@ -370,7 +360,7 @@ class CarBodywork extends SceneObject {
 
         super(
 
-            carBodyworkVertices(),
+            Robot_BodyworkVertices(),
 
             color
         );
@@ -382,7 +372,7 @@ class CarBodywork extends SceneObject {
 // CLASSE CAR WHEEL
 // ==================================================
 
-class CarWheel extends SceneObject {
+/*class CarWheel extends SceneObject {
 
     constructor(xPosition, angularSpeed) {
 
@@ -432,7 +422,7 @@ class CarWheel extends SceneObject {
                 localTransform
             );
     }
-}
+}*/
 
 
 // ==================================================
@@ -453,9 +443,10 @@ class Car {
 
         this.carBodywork = new CarBodywork(color);
 
-        this.leftWheel = new CarWheel(-0.1,this.angularSpeed);
 
-        this.rightWheel = new CarWheel(0.1, this.angularSpeed);
+        /*this.leftWheel = new CarWheel(-0.1,this.angularSpeed);
+
+        this.rightWheel = new CarWheel(0.1, this.angularSpeed);*/
     }
 
     move() {
@@ -466,33 +457,22 @@ class Car {
 
             this.speed = -this.speed;
             
-            this.angularSpeed = -this.angularSpeed;
-
-            this.leftWheel.updateAngularSpeed(this.angularSpeed);
-
-            this.rightWheel.updateAngularSpeed(this.angularSpeed);
         }
 
         const carTransform = m3.translation(this.tx,this.ty);
 
         this.carBodywork.updateModelTransform(carTransform);
 
-        this.leftWheel.updateRotation();
-
-        this.rightWheel.updateRotation();
-
-        this.leftWheel.updateModelTransform(carTransform);
-
-        this.rightWheel.updateModelTransform(carTransform);
     }
 
     draw(renderer) {
 
         renderer.draw(this.carBodywork);
 
+        /*
         renderer.draw(this.leftWheel);
 
-        renderer.draw(this.rightWheel);
+        renderer.draw(this.rightWheel);*/
     }
 }
 
