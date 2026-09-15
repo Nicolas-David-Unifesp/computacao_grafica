@@ -293,9 +293,7 @@ function roadVertices() {
 
 function Robot_BodyworkVertices() {
 
-    const vertices = [];
-
-    vertices.push(...rectangleVertices(0.0,0.0,0.4,0.4));
+    const vertices = rectangleVertices(0.0,0.0,0.4,0.4);
 
     return new Float32Array(vertices);
 }
