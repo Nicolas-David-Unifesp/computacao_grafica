@@ -337,6 +337,15 @@ function Robot_other_headVertices() {
     return new Float32Array(vertices);
 }
 
+function Robot_ArmVertices() {
+    return new Float32Array(rectangleVertices(0.0, -0.02, 0.12, 0.04));
+}
+
+// Perna: retângulo fino vertical, pivô no topo
+function Robot_LegVertices() {
+    return new Float32Array(rectangleVertices(-0.02, 0.0, 0.04, 0.14));
+}
+
 
 
 
@@ -416,7 +425,7 @@ class Robot_Head extends SceneObject {
     }
 }
 
-class Robot_Eyes extends SceneObject {
+class Robot_Other_Head extends SceneObject {
     constructor(color) {
         super(
             Robot_other_headVertices(),
@@ -424,64 +433,6 @@ class Robot_Eyes extends SceneObject {
         );
     }
 }
-
-
-// ==================================================
-// CLASSE Robot WHEEL
-// ==================================================
-
-/*class RobotWheel extends SceneObject {
-
-    constructor(xPosition, angularSpeed) {
-
-        super(
-
-            RobotWheelVertices(),
-
-            new Float32Array([
-                0.5,
-                0.5,
-                0.5
-            ])
-        );
-
-        this.xPosition = xPosition;
-
-        this.theta = 0.0;
-
-        this.angularSpeed = angularSpeed;
-    }
-
-
-    updateAngularSpeed(angularSpeed) {
-
-        this.angularSpeed = angularSpeed;
-    }
-
-    updateRotation() {
-
-        this.theta += this.angularSpeed;
-    }
-
-
-    updateModelTransform(RobotModelTransform) {
-
-        const localTransform =
-
-            m3.multiply(
-                m3.translation(this.xPosition,0.0),
-                m3.rotation(this.theta)
-            );
-
-        this.modelTransform =
-
-            m3.multiply(
-                RobotModelTransform,
-                localTransform
-            );
-    }
-}*/
-
 
 // ==================================================
 // CLASSE Robot
@@ -500,7 +451,7 @@ class Robot {
         this.Robot_Head = new Robot_Head(new Float32Array(color));
         
         // Instancia os olhos (usando uma cor diferente, ex: amarelo)
-        this.Robot_Eyes = new Robot_Eyes(new Float32Array([1.0, 1.0, 0.0]));
+        this.Robot_Other_Head = new Robot_Other_Head(new Float32Array([1.0, 1.0, 0.0]));
     }
 
     move() {
@@ -520,13 +471,13 @@ class Robot {
         const headTransform = m3.multiply(RobotTransform, headOffset);
         
         this.Robot_Head.updateModelTransform(headTransform);
-        this.Robot_Eyes.updateModelTransform(headTransform);
+        this.Robot_Other_Head.updateModelTransform(headTransform);
     }
 
     draw(renderer) {
         renderer.draw(this.Robot_Bodywork);
         renderer.draw(this.Robot_Head);
-        renderer.draw(this.Robot_Eyes);
+        renderer.draw(this.Robot_Other_Head);
     }
 }
 
