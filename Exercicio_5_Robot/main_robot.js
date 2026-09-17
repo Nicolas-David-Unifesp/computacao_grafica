@@ -338,7 +338,17 @@ function Robot_other_headVertices() {
 }
 
 function RobotLegVertices() {
-    const vertices = rectangleVertices(-0.05, -0.4, 0.1, 0.4);
+    const vertices_perna = rectangleVertices(-0.05, -0.35, 0.1, 0.4);
+    return new Float32Array(vertices_perna);
+}
+
+function RobotWheelVertices() {
+    const vertices_roda = circleVertices(0.07, 10);// raio, número de segmentos
+    return new Float32Array(vertices_roda);
+}
+
+function RobotArmVertices() {
+    const vertices = rectangleVertices(-0.1, -0.5, 0.08, 0.40);
     return new Float32Array(vertices);
 }
 
@@ -444,57 +454,51 @@ class Robot_Leg extends SceneObject {
 // CLASSE Robot WHEEL
 // ==================================================
 
-/*class RobotWheel extends SceneObject {
+class RobotWheel extends SceneObject {
 
-    constructor(xPosition, angularSpeed) {
+    constructor(xPosition, yPosition, angularSpeed) { // Adicionado yPosition
 
         super(
-
             RobotWheelVertices(),
-
-            new Float32Array([
-                0.5,
-                0.5,
-                0.5
-            ])
+            new Float32Array([0.5, 0.5, 0.5])
         );
 
         this.xPosition = xPosition;
-
+        this.yPosition = yPosition; // Armazena a posição Y
         this.theta = 0.0;
-
         this.angularSpeed = angularSpeed;
     }
-
-
-    updateAngularSpeed(angularSpeed) {
-
-        this.angularSpeed = angularSpeed;
-    }
-
-    updateRotation() {
-
-        this.theta += this.angularSpeed;
-    }
-
 
     updateModelTransform(RobotModelTransform) {
 
         const localTransform =
-
             m3.multiply(
-                m3.translation(this.xPosition,0.0),
+                m3.translation(this.xPosition, this.yPosition), // Aplica Y aqui
                 m3.rotation(this.theta)
             );
 
         this.modelTransform =
-
             m3.multiply(
                 RobotModelTransform,
                 localTransform
             );
     }
-}*/
+
+    updateRotation() {
+        this.theta += this.angularSpeed;
+    }
+}
+
+class Robot_Arm extends SceneObject {
+    constructor(color) {
+        super(
+            RobotArmVertices(),
+            new Float32Array(color)
+        );
+    }
+}
+
+
 
 
 // ==================================================
@@ -507,47 +511,118 @@ class Robot {
         this.tx = tx;
         this.ty = ty;
         this.speed = speed;
+        this.legAngle = 0;  
 
         this.Robot_Bodywork = new Robot_Bodywork(color);
-        
-        // Instancia a cabeça (usando uma cor diferente, ex: azul/cinza)
         this.Robot_Head = new Robot_Head(new Float32Array(color));
-        
-        // Instancia os olhos (usando uma cor diferente, ex: amarelo)
         this.Robot_Eyes = new Robot_Eyes(new Float32Array([1.0, 1.0, 0.0]));
-
-        this.Robot_Leg = new Robot_Leg(new Float32Array(color));
+        this.Robot_Leg = new Robot_Leg(new Float32Array(color));       
+        this.Robot_Wheel = new RobotWheel(0.0, -0.35, 0.1);
+        this.Robot_Arm_dir = new Robot_Arm(color);
+        this.Robot_Arm_esq = new Robot_Arm(color);
+        this.armAngleDir = 0;
+        this.armAngleEsq = 0;
+        this.waveTime = 0;      
     }
 
     move() {
         this.tx += this.speed;
 
-        if (this.tx > 1.8 || this.tx < -1.8) {
+        if (this.tx > 1.55 || this.tx < -1.69) {
             this.speed = -this.speed;
         }
 
-        const RobotTransform = m3.translation(this.tx, this.ty);
+        const zone = 0.8;
+        const maxAngle = Math.PI / 4;
 
-        // Aplica a transformação base ao corpo e à cabeça
+        if (this.tx > 1.8 - zone) {
+            const t = (this.tx - (1.8 - zone)) / zone;
+            this.legAngle = t * maxAngle;
+        } else if (this.tx < -1.8 + zone) {
+            const t = ((-1.8 + zone) - this.tx) / zone;
+            this.legAngle = -t * maxAngle;
+        } else {
+            this.legAngle += (0 - this.legAngle) * 0.05;
+        }
+
+        // Rotação do corpo inteiro
+        const bodyAngle = this.legAngle * 0.3;
+
+        const RobotTransform = m3.multiply(
+            m3.translation(this.tx, this.ty),
+            m3.rotation(bodyAngle)
+        );
+
         this.Robot_Bodywork.updateModelTransform(RobotTransform);
-        
-        // Posição da cabeça acima do corpo
-        const headOffset = m3.translation(0.1, -0.1); // Ajustado para centralizar no corpo
+
+        const headOffset = m3.multiply(
+            m3.translation(0.1, -0.1),
+            m3.rotation(bodyAngle * 0.5) // cabeça rotaciona menos ainda
+        );
         const headTransform = m3.multiply(RobotTransform, headOffset);
-        
-        const legOffset = m3.translation(0.1, -0.6); // Ajustado para posicionar a perna abaixo do corpo
-        const legTransform = m3.multiply(RobotTransform, legOffset);
-        
         this.Robot_Head.updateModelTransform(headTransform);
         this.Robot_Eyes.updateModelTransform(headTransform);
+
+        const legOffset = m3.multiply(
+            m3.translation(0.1, -0.6),
+            m3.rotation(this.legAngle)
+        );
+        const legTransform = m3.multiply(RobotTransform, legOffset);
+
         this.Robot_Leg.updateModelTransform(legTransform);
+        this.Robot_Wheel.updateRotation();
+        this.Robot_Wheel.updateModelTransform(legTransform);
+
+        const armPivotDirX = 0.15;
+        const armPivotDirY = -0.16;
+
+        const armPivotEsqX = 0.15;
+        const armPivotEsqY = -0.16;
+
+        if (this.tx > 1.8 - zone) {
+        // Perto da parede direita: braço direito encosta na parede (aponta para cima/direita)
+        const t = (this.tx - (1.8 - zone)) / zone;
+        this.armAngleDir = t * (Math.PI / 2); // vai até -90° (aponta para cima)
+        this.armAngleEsq = this.legAngle * 0.3; // segue o corpo
+        this.waveTime = 0;
+
+        } else if (this.tx < -1.8 + zone) {
+            // Perto da parede esquerda: braço esquerdo encosta
+            const t = ((-1.8 + zone) - this.tx) / zone;
+            this.armAngleEsq = -t * (Math.PI / 2); // vai até +90°
+            this.armAngleDir = this.legAngle * 0.3;
+            this.waveTime = 0;
+
+        } else {
+            // Zona central: tchau com braço direito, esquerdo faz movimento contrário
+            this.waveTime += 0.05;
+            this.armAngleDir += (-Math.sin(this.waveTime) * 0.8 - this.armAngleDir) * 0.1;
+            this.armAngleEsq += (Math.sin(this.waveTime) * 0.3 - this.armAngleEsq) * 0.1;
+        }
+
+        const armOffsetDir = m3.multiply(
+            m3.translation(armPivotDirX, armPivotDirY),
+            m3.rotation(this.armAngleDir)
+        );
+        const armTransformDir = m3.multiply(RobotTransform, armOffsetDir);
+        this.Robot_Arm_dir.updateModelTransform(armTransformDir);
+
+        const armOffsetEsq = m3.multiply(
+            m3.translation(armPivotEsqX, armPivotEsqY),
+            m3.rotation(this.armAngleEsq)
+        );
+        const armTransformEsq = m3.multiply(RobotTransform, armOffsetEsq);
+        this.Robot_Arm_esq.updateModelTransform(armTransformEsq);
     }
 
     draw(renderer) {
         renderer.draw(this.Robot_Bodywork);
+        renderer.draw(this.Robot_Arm_dir);
+        renderer.draw(this.Robot_Arm_esq);
         renderer.draw(this.Robot_Head);
         renderer.draw(this.Robot_Eyes);
         renderer.draw(this.Robot_Leg);
+        renderer.draw(this.Robot_Wheel);
     }
 }
 
