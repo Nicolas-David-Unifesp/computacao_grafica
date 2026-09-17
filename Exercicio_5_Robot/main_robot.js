@@ -347,9 +347,20 @@ function RobotWheelVertices() {
     return new Float32Array(vertices_roda);
 }
 
+// --------------------------------------------------
+// CORREÇÃO 1: geometria do braço
+// O braço agora "pendura" a partir do ombro (pivô em 0,0 no topo)
+// e é centralizado em x=0. Assim a rotação gira em torno do ombro,
+// e o mesmo modelo serve para o braço esquerdo e direito.
+// --------------------------------------------------
 function RobotArmVertices() {
-    const vertices = rectangleVertices(-0.1, -0.5, 0.08, 0.40);
+    // x=-0.03, y=-0.4, largura=0.06, altura=0.4  -> vai de y=-0.4 (mão) até y=0 (ombro)
+    const vertices = rectangleVertices(-0.03, -0.4, 0.06, 0.40);
     return new Float32Array(vertices);
+}
+
+function complementColor(color) {
+    return new Float32Array([1.0 - color[0], 1.0 - color[1], 1.0 - color[2]]);
 }
 
 
@@ -506,23 +517,26 @@ class Robot_Arm extends SceneObject {
 // ==================================================
 
 class Robot {
-    
+
     constructor(tx, ty, color, speed) {
         this.tx = tx;
         this.ty = ty;
         this.speed = speed;
-        this.legAngle = 0;  
+        this.legAngle = 0;
+        this.ampDir = 3;
+        this.ampEsq = 0.9;
 
         this.Robot_Bodywork = new Robot_Bodywork(color);
         this.Robot_Head = new Robot_Head(new Float32Array(color));
         this.Robot_Eyes = new Robot_Eyes(new Float32Array([1.0, 1.0, 0.0]));
-        this.Robot_Leg = new Robot_Leg(new Float32Array(color));       
+        this.Robot_Leg = new Robot_Leg(new Float32Array(color));
         this.Robot_Wheel = new RobotWheel(0.0, -0.35, 0.1);
         this.Robot_Arm_dir = new Robot_Arm(color);
         this.Robot_Arm_esq = new Robot_Arm(color);
         this.armAngleDir = 0;
         this.armAngleEsq = 0;
-        this.waveTime = 0;      
+        this.waveTime = 0;
+        
     }
 
     move() {
@@ -530,11 +544,15 @@ class Robot {
 
         if (this.tx > 1.55 || this.tx < -1.69) {
             this.speed = -this.speed;
+            const tmp = this.ampDir;
+            this.ampDir = this.ampEsq;
+            this.ampEsq = tmp;
         }
 
         const zone = 0.8;
         const maxAngle = Math.PI / 4;
 
+        // Ângulo das pernas em função da proximidade da parede
         if (this.tx > 1.8 - zone) {
             const t = (this.tx - (1.8 - zone)) / zone;
             this.legAngle = t * maxAngle;
@@ -545,7 +563,7 @@ class Robot {
             this.legAngle += (0 - this.legAngle) * 0.05;
         }
 
-        // Rotação do corpo inteiro
+        // Rotação do corpo inteiro (o tronco balança um pouco)
         const bodyAngle = this.legAngle * 0.3;
 
         const RobotTransform = m3.multiply(
@@ -573,32 +591,27 @@ class Robot {
         this.Robot_Wheel.updateRotation();
         this.Robot_Wheel.updateModelTransform(legTransform);
 
-        const armPivotDirX = 0.15;
+        
+        const armPivotDirX = 0.19;   // ombro direito
         const armPivotDirY = -0.16;
 
-        const armPivotEsqX = 0.15;
+        const armPivotEsqX = 0.01;   // ombro esquerdo
         const armPivotEsqY = -0.16;
 
-        if (this.tx > 1.8 - zone) {
-        // Perto da parede direita: braço direito encosta na parede (aponta para cima/direita)
-        const t = (this.tx - (1.8 - zone)) / zone;
-        this.armAngleDir = t * (Math.PI / 2); // vai até -90° (aponta para cima)
-        this.armAngleEsq = this.legAngle * 0.3; // segue o corpo
-        this.waveTime = 0;
+        this.waveTime += 0.07;
 
-        } else if (this.tx < -1.8 + zone) {
-            // Perto da parede esquerda: braço esquerdo encosta
-            const t = ((-1.8 + zone) - this.tx) / zone;
-            this.armAngleEsq = -t * (Math.PI / 2); // vai até +90°
-            this.armAngleDir = this.legAngle * 0.3;
-            this.waveTime = 0;
+        
 
-        } else {
-            // Zona central: tchau com braço direito, esquerdo faz movimento contrário
-            this.waveTime += 0.05;
-            this.armAngleDir += (-Math.sin(this.waveTime) * 0.8 - this.armAngleDir) * 0.1;
-            this.armAngleEsq += (Math.sin(this.waveTime) * 0.3 - this.armAngleEsq) * 0.1;
-        }
+        let alvoDir = -Math.sin(this.waveTime) * this.ampDir + bodyAngle;
+        let alvoEsq =  Math.sin(this.waveTime) * this.ampEsq + bodyAngle;
+
+
+        // Impede o braço de girar para dentro do corpo:
+        alvoDir = Math.max(alvoDir, bodyAngle);   //pro braço não entrar dentro do corpo
+        alvoEsq = Math.min(alvoEsq, bodyAngle);   
+
+        this.armAngleDir += (alvoDir - this.armAngleDir) * 0.1;
+        this.armAngleEsq += (alvoEsq - this.armAngleEsq) * 0.1;
 
         const armOffsetDir = m3.multiply(
             m3.translation(armPivotDirX, armPivotDirY),
