@@ -337,6 +337,11 @@ function Robot_other_headVertices() {
     return new Float32Array(vertices);
 }
 
+function RobotLegVertices() {
+    const vertices = rectangleVertices(-0.05, -0.4, 0.1, 0.4);
+    return new Float32Array(vertices);
+}
+
 
 
 
@@ -425,6 +430,15 @@ class Robot_Eyes extends SceneObject {
     }
 }
 
+class Robot_Leg extends SceneObject {
+    constructor(color) {
+        super(
+            RobotLegVertices(),
+            color
+        );
+    }
+}
+
 
 // ==================================================
 // CLASSE Robot WHEEL
@@ -501,6 +515,8 @@ class Robot {
         
         // Instancia os olhos (usando uma cor diferente, ex: amarelo)
         this.Robot_Eyes = new Robot_Eyes(new Float32Array([1.0, 1.0, 0.0]));
+
+        this.Robot_Leg = new Robot_Leg(new Float32Array(color));
     }
 
     move() {
@@ -519,14 +535,19 @@ class Robot {
         const headOffset = m3.translation(0.1, -0.1); // Ajustado para centralizar no corpo
         const headTransform = m3.multiply(RobotTransform, headOffset);
         
+        const legOffset = m3.translation(0.1, -0.6); // Ajustado para posicionar a perna abaixo do corpo
+        const legTransform = m3.multiply(RobotTransform, legOffset);
+        
         this.Robot_Head.updateModelTransform(headTransform);
         this.Robot_Eyes.updateModelTransform(headTransform);
+        this.Robot_Leg.updateModelTransform(legTransform);
     }
 
     draw(renderer) {
         renderer.draw(this.Robot_Bodywork);
         renderer.draw(this.Robot_Head);
         renderer.draw(this.Robot_Eyes);
+        renderer.draw(this.Robot_Leg);
     }
 }
 
