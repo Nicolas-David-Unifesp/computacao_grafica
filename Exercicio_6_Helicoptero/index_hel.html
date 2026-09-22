@@ -2,19 +2,266 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Helicopter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helicóptero 3D — WebGL</title>
+
+    <style>
+        :root {
+            --bg-1: #0f2027;
+            --bg-2: #203a43;
+            --bg-3: #2c5364;
+            --accent: #4fc3f7;
+            --panel: rgba(255, 255, 255, 0.06);
+            --panel-border: rgba(255, 255, 255, 0.12);
+            --text: #e8f1f5;
+            --text-dim: #9fb3bd;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 16px;
+            gap: 24px;
+        }
+
+        header {
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        header p {
+            margin: 8px 0 0;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .stage {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .canvas-wrap {
+            position: relative;
+            padding: 10px;
+            border-radius: 16px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        }
+
+        canvas {
+            display: block;
+            border-radius: 10px;
+            background: radial-gradient(circle at 50% 35%, #16323d 0%, #0c1c22 100%);
+            cursor: grab;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            background: rgba(0, 0, 0, 0.35);
+            padding: 6px 14px;
+            border-radius: 20px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .panel {
+            width: 260px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(6px);
+        }
+
+        .panel h2 {
+            margin: 0 0 16px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+
+        .keys {
+            display: grid;
+            grid-template-columns: repeat(3, 56px);
+            grid-template-rows: repeat(2, 56px);
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .key {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border);
+            font-size: 1.3rem;
+            font-weight: 600;
+            user-select: none;
+            transition: all 0.08s ease;
+        }
+
+        .key.up    { grid-column: 2; grid-row: 1; }
+        .key.left  { grid-column: 1; grid-row: 2; }
+        .key.down  { grid-column: 2; grid-row: 2; }
+        .key.right { grid-column: 3; grid-row: 2; }
+
+        .key.k-w { grid-column: 2; grid-row: 1; }
+        .key.k-a { grid-column: 1; grid-row: 2; }
+        .key.k-s { grid-column: 2; grid-row: 2; }
+        .key.k-d { grid-column: 3; grid-row: 2; }
+
+        .group-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        /* estado "pressionado" acionado por JS */
+        .key.active {
+            background: var(--accent);
+            color: #06222e;
+            transform: translateY(2px);
+            box-shadow: 0 0 16px rgba(79, 195, 247, 0.7);
+        }
+
+        .legend {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .legend b {
+            color: var(--text);
+        }
+
+        footer {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 
 <body>
 
-    <canvas id="canvas_helicoptero" width="600" height="600"></canvas>
+    <header>
+        <h1>🚁 Helicóptero 3D</h1>
+        <p>Use as <b>setas</b> para girar e <b>W A S D</b> para mover o helicóptero. As hélices giram sozinhas!</p>
+    </header>
 
+    <div class="stage">
+        <div class="canvas-wrap">
+            <canvas id="canvas_helicoptero" width="600" height="600"></canvas>
+            <div class="hint">Setas: girar &nbsp;•&nbsp; W A S D: mover</div>
+        </div>
+
+        <aside class="panel">
+            <h2>Controles</h2>
+
+            <div class="group-label">Rotação — Setas</div>
+            <div class="keys" aria-hidden="true">
+                <div class="key up"    data-key="ArrowUp">↑</div>
+                <div class="key left"  data-key="ArrowLeft">←</div>
+                <div class="key down"  data-key="ArrowDown">↓</div>
+                <div class="key right" data-key="ArrowRight">→</div>
+            </div>
+
+            <div class="group-label">Movimento — W A S D</div>
+            <div class="keys" aria-hidden="true">
+                <div class="key k-w" data-key="w">W</div>
+                <div class="key k-a" data-key="a">A</div>
+                <div class="key k-s" data-key="s">S</div>
+                <div class="key k-d" data-key="d">D</div>
+            </div>
+
+            <ul class="legend">
+                <li><b>↑ / ↓</b> — inclina para frente / trás</li>
+                <li><b>← / →</b> — gira para esquerda / direita</li>
+                <li><b>W / S</b> — move para cima / baixo</li>
+                <li><b>A / D</b> — move para esquerda / direita</li>
+                <li>🔄 Hélice principal e da cauda giram automaticamente</li>
+            </ul>
+        </aside>
+    </div>
+
+    <footer>Feito com WebGL • segure uma seta para movimento contínuo</footer>
+
+    <!-- Scripts do projeto (mesma ordem original) -->
     <script src="m4.js"></script>
     <script src="helicopterGeometry.js"></script>
     <script src="renderer.js"></script>
     <script src="sceneObject.js"></script>
     <script src="scene.js"></script>
     <script src="main_hel.js"></script>
+
+    <!-- Feedback visual das teclas: acende o botão correspondente no painel -->
+    <script>
+        (function () {
+            const keyEls = document.querySelectorAll(".key[data-key]");
+            const map = {};
+            keyEls.forEach(el => map[el.dataset.key] = el);
+
+            // normaliza para o data-key ("W" -> "w", setas ficam iguais)
+            function resolve(key) {
+                return map[key] || map[key.toLowerCase()];
+            }
+
+            window.addEventListener("keydown", e => {
+                const el = resolve(e.key);
+                if (el) {
+                    el.classList.add("active");
+                    // evita rolar a página com as setas
+                    if (e.key.startsWith("Arrow")) e.preventDefault();
+                }
+            });
+
+            window.addEventListener("keyup", e => {
+                const el = resolve(e.key);
+                if (el) el.classList.remove("active");
+            });
+        })();
+    </script>
 
 </body>
 </html>
