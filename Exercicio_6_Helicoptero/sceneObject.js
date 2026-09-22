@@ -1,81 +1,84 @@
 // ==================================================
-// CLASS - SCENE
+// CLASS - SCENE OBJECT
 // ==================================================
 
-class Scene {
+class SceneObject {
 
-    constructor(gl, program) {
+    constructor(
+        vertices,
+        colors,
+        indices,
+    ) {
 
-        this.renderer =
-            new Renderer(gl, program);
+        this.vertices = vertices;
+        this.colors = colors;
+        this.indices = indices;
 
-        // Figura que será exibida
-        this.helicopterBody = new HelicopterBody();
-
-        this.helicopterTopShaft = new HelicopterTopShaft();
-
-        this.helicopterTail = new HelicopterTail();
-
-        this.helicopterPropellers = new HelicopterPropellers();
-
-        this.helicopterTailPropeller = new HelicopterTailPropeller();
-
-        this.theta = 0.0;
+        this.modelTransform = m4.identity();
     }
 
-    update() {
-        this.theta += 0.01;
-        this.helicopterBody.update(m4.xRotation(this.theta));
-        this.helicopterTopShaft.update(m4.xRotation(this.theta));
-        this.helicopterTail.update(m4.xRotation(this.theta));
-        this.helicopterPropellers.update(m4.xRotation(this.theta));
-        this.helicopterTailPropeller.update(m4.xRotation(this.theta));
+    update(modelTransform) {
+        this.modelTransform = modelTransform;
     }
 
-    draw() {
+    updateModelTransform(modelTransform) {
 
-        gl.clear(
-            gl.COLOR_BUFFER_BIT |
-            gl.DEPTH_BUFFER_BIT
-        );
-
-        gl.useProgram(program);
-
-        this.helicopterBody.draw(
-            this.renderer
-        );
-
-        this.helicopterTopShaft.draw(
-            this.renderer
-        );
-
-        this.helicopterTail.draw(
-            this.renderer
-        );
-
-        this.helicopterPropellers.draw(
-            this.renderer
-        );
-
-        this.helicopterTailPropeller.draw(
-            this.renderer
-        );
+        this.modelTransform =
+            modelTransform;
     }
 
-    execute() {
+    draw(renderer) {
 
-        this.update();
-        this.draw();
+        renderer.draw(this);
+    }
+}
 
-        requestAnimationFrame(
-            () => this.execute()
+class HelicopterBody extends SceneObject{
+    constructor(){
+        super(
+            helicopterBodyGeometry.vertices,
+            helicopterBodyGeometry.colors,
+            helicopterBodyGeometry.indices
         );
     }
+}
 
-    init() {
+class HelicopterTopShaft extends SceneObject{
+    constructor(){
+        super(
+            helicopterTopShaftGeometry.vertices,
+            helicopterTopShaftGeometry.colors,
+            helicopterTopShaftGeometry.indices
+        );
+    }
+}
 
-        requestAnimationFrame(
-            () => this.execute()
+class HelicopterTail extends SceneObject{
+    constructor(){
+        super(
+            helicopterTailGeometry.vertices,
+            helicopterTailGeometry.colors,
+            helicopterTailGeometry.indices
+        );
+    }
+}
+
+class HelicopterPropellers extends SceneObject{
+    constructor(){
+        super(
+            helicopterPropellersGeometry.vertices,
+            helicopterPropellersGeometry.colors,
+            helicopterPropellersGeometry.indices
+        );
+    }
+}
+
+class HelicopterTailPropeller extends SceneObject{
+    constructor(){
+        super(
+            helicopterTailPropellerGeometry.vertices,
+            helicopterTailPropellerGeometry.colors,
+            helicopterTailPropellerGeometry.indices
         );
     }
 }
