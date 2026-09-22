@@ -5,7 +5,8 @@
 class Scene {
 
     constructor(gl, program) {
-
+        this.gl = gl;          
+        this.program = program;
         this.renderer =
             new Renderer(gl, program);
 
@@ -21,18 +22,34 @@ class Scene {
         this.helicopterTailPropeller = new HelicopterTailPropeller();
 
         this.theta = 0.0;
+
+        this.tx = 0.0;
+        this.ty = 0.0;
     }
 
     update() {
+        //Pra fazer a translação global
+        const T = m4.translation(this.tx, this.ty, 0);
         this.theta += 0.01;
-        this.helicopterBody.update(m4.xRotation(this.theta));
-        this.helicopterTopShaft.update(m4.xRotation(this.theta));
-        this.helicopterTail.update(m4.xRotation(this.theta));
-        this.helicopterPropellers.update(m4.xRotation(this.theta));
-        this.helicopterTailPropeller.update(m4.xRotation(this.theta));
+
+        this.helicopterBody.update(T);
+        this.helicopterTopShaft.update(T);
+        this.helicopterTail.update(T);
+
+        const rottop = m4.yRotation(this.theta);
+        this.helicopterPropellers.update(m4.multiply(T,rottop));
+
+        const tailCenter = m4.translation(0.7, 0.0, 0.06);
+        const tailCenterInv = m4.translation(-0.7, 0.0, -0.06);
+        const rotTail = m4.zRotation(this.theta);
+        const localTail = m4.multiply(m4.multiply(tailCenter, rotTail), tailCenterInv);
+        this.helicopterTailPropeller.update(m4.multiply(T, localTail));
     }
 
     draw() {
+
+        const gl = this.gl;         // <-- usar this.gl
+        const program = this.program;
 
         gl.clear(
             gl.COLOR_BUFFER_BIT |
