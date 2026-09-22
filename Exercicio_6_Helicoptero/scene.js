@@ -25,6 +25,19 @@ class Scene {
 
         this.tx = 0.0;
         this.ty = 0.0;
+
+        this.speed_keydows = 0.02;
+        this.keys = {};
+
+        window.addEventListener("keydown", e => this.keys[e.key] = true);
+        window.addEventListener("keyup",   e => this.keys[e.key] = false);
+    }
+
+    handleInput(){
+        if (this.keys["ArrowUp"])    this.ty += this.speed;
+        if (this.keys["ArrowDown"])  this.ty -= this.speed;
+        if (this.keys["ArrowRight"]) this.tx += this.speed;
+        if (this.keys["ArrowLeft"])  this.tx -= this.speed;
     }
 
     update() {
