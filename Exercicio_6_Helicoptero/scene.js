@@ -29,7 +29,7 @@ class Scene {
         this.rotX = 0.0;
         this.rotY = 0.0;
 
-        this.speed_keydows = 0.02;
+        this.speed = 0.02;
         this.keys = {};
 
         window.addEventListener("keydown", e => this.keys[e.key] = true);
