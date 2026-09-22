@@ -26,6 +26,9 @@ class Scene {
         this.tx = 0.0;
         this.ty = 0.0;
 
+        this.rotX = 0.0;
+        this.rotY = 0.0;
+
         this.speed_keydows = 0.02;
         this.keys = {};
 
@@ -34,29 +37,31 @@ class Scene {
     }
 
     handleInput(){
-        if (this.keys["ArrowUp"])    this.ty += this.speed;
-        if (this.keys["ArrowDown"])  this.ty -= this.speed;
-        if (this.keys["ArrowRight"]) this.tx += this.speed;
-        if (this.keys["ArrowLeft"])  this.tx -= this.speed;
+        if (this.keys["ArrowUp"])    this.rotX -= this.speed;
+        if (this.keys["ArrowDown"])  this.rotX += this.speed;
+        if (this.keys["ArrowRight"]) this.rotY += this.speed;
+        if (this.keys["ArrowLeft"])  this.rotY -= this.speed;
     }
 
     update() {
-        //Pra fazer a translação global
-        const T = m4.translation(this.tx, this.ty, 0);
-        this.theta += 0.01;
+        this.handleInput();
+        this.theta += 0.05;
 
-        this.helicopterBody.update(T);
-        this.helicopterTopShaft.update(T);
-        this.helicopterTail.update(T);
+        // rotação global do helicóptero
+        const R = m4.multiply(m4.yRotation(this.rotY), m4.xRotation(this.rotX));
 
-        const rottop = m4.yRotation(this.theta);
-        this.helicopterPropellers.update(m4.multiply(T,rottop));
+        this.helicopterBody.update(R);
+        this.helicopterTopShaft.update(R);
+        this.helicopterTail.update(R);
 
-        const tailCenter = m4.translation(0.7, 0.0, 0.06);
-        const tailCenterInv = m4.translation(-0.7, 0.0, -0.06);
+        const rotTop = m4.yRotation(this.theta);
+        this.helicopterPropellers.update(m4.multiply(R, rotTop));
+
+        const caudaCentro    = m4.translation( 0.7, 0.0,  0.06);
+        const caudaCentroInv = m4.translation(-0.7, 0.0, -0.06);
         const rotTail = m4.zRotation(this.theta);
-        const localTail = m4.multiply(m4.multiply(tailCenter, rotTail), tailCenterInv);
-        this.helicopterTailPropeller.update(m4.multiply(T, localTail));
+        const localTail = m4.multiply(m4.multiply(caudaCentro, rotTail), caudaCentroInv);
+        this.helicopterTailPropeller.update(m4.multiply(R, localTail));
     }
 
     draw() {
